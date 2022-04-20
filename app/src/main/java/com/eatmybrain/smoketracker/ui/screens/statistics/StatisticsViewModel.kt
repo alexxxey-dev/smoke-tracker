@@ -1,0 +1,78 @@
+package com.eatmybrain.smoketracker.ui.screens.statistics
+
+import androidx.lifecycle.*
+import com.eatmybrain.smoketracker.data.FakeRepository
+import com.eatmybrain.smoketracker.data.Repository
+import com.eatmybrain.smoketracker.data.structs.Session
+import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
+import com.eatmybrain.smoketracker.util.ChartDataParser
+import com.github.mikephil.charting.data.LineDataSet
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+
+
+@HiltViewModel
+class StatisticsViewModel @Inject constructor(
+    private val repository: Repository,
+    private val chartDataParser: ChartDataParser
+) : ViewModel() {
+
+    private val _sessionsPeriod = MutableLiveData<SessionsPeriod>()
+    val sessionsPeriod: LiveData<SessionsPeriod> = _sessionsPeriod
+
+    val sessionList = Transformations.switchMap(sessionsPeriod) { period ->
+        sessionsHistory(period)
+    }
+
+    val sessionsLineData = Transformations.switchMap(sessionList){ sessions->
+        val sessionsPeriod = _sessionsPeriod.value!!
+        sessionsLineData(sessions, sessionsPeriod)
+    }
+
+    val moneySpent = Transformations.switchMap(sessionList){sessions->
+         moneySpent(sessions)
+    }
+
+    init {
+        updateSessionsPeriod(SessionsPeriod.Week)
+    }
+
+    fun updateSessionsPeriod(period: SessionsPeriod) {
+        _sessionsPeriod.value = period
+    }
+
+    private fun sessionsLineData(sessions:List<Session>, sessionsPeriod: SessionsPeriod) :LiveData<LineDataSet>{
+        val lineData = MutableLiveData<LineDataSet>()
+        viewModelScope.launch {
+            lineData.value = withContext(Dispatchers.IO){
+                chartDataParser.parse(sessions, sessionsPeriod)
+            }
+        }
+        return lineData
+    }
+
+    private fun sessionsHistory(sessionsPeriod: SessionsPeriod): LiveData<List<Session>> {
+        val history = MutableLiveData<List<Session>>()
+        viewModelScope.launch {
+            //TODO
+            history.value = withContext(Dispatchers.IO) {
+                repository.sessionHistory(sessionsPeriod).sortedByDescending { it.timestamp }
+              //  FakeRepository.sessionHistory(sessionsPeriod)
+            }
+        }
+        return history
+    }
+
+    private fun moneySpent(sessions:List<Session>):LiveData<Double>{
+        val moneySpent = MutableLiveData<Double>()
+        viewModelScope.launch {
+            moneySpent.value = withContext(Dispatchers.IO){
+                sessions.sumOf { it.amount * it.amountType.weight * it.strainInfo.gramPrice}
+            }
+        }
+        return moneySpent
+    }
+}

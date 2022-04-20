@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Weed Tracker</string>
+
+    <string name="per_month">per month</string>
+    <string name="per_week">per week</string>
+    <string name="per_year">per year</string>
+    <string name="weed_smoked">Weed smoked (gr)</string>
+    <string name="add_session">Add session</string>
+    <string name="money_spent">Money spent</string>
+    <string name="enter_strain_name">Enter strain name…</string>
+    <string name="strain_name">Strain name…</string>
+    <string name="price_per_gram">Price per gram…</string>
+
+    <string name="add_session_success">add_session_success</string>
+    <string name="strain_name_empty">Please enter strain name</string>
+    <string name="price_per_gram_empty">Please enter price</string>
+    <string name="price_per_gram_digits">Price can\'t be a string</string>
+    <string name="high_empty">Please select high strength</string>
+    <string name="amount_empty">Please enter amount</string>
+    <string name="amount_digits">Amount can\'t be a string</string>
+
+    <string name="mood_before">Mood before</string>
+    <string name="mood_after">Mood after</string>
+    <string name="high">High</string>
+    <string name="test_yourself">Test yourself</string>
+    <string name="amount">Amount</string>
+    <string name="save">Save</string>
+</resources>
