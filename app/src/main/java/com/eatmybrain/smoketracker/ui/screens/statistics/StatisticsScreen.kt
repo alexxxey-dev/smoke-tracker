@@ -81,7 +81,7 @@ private fun Statistics(
     onSessionClicked:(Session)->Unit
 ) {
 
-    Column() {
+    Column {
         HeaderRow(
             onPeriodSelected = onPeriodSelected,
             currentPeriod = currentPeriod,
@@ -102,18 +102,32 @@ private fun Statistics(
             onAddSession = onAddSession
         )
 
-        SessionList(
-            sessionList = sessionList,
-            modifier = Modifier.padding(
-                start = 12.dp,
-                end = 12.dp,
-                bottom = Constants.BottomNavHeight + 8.dp
-            ),
-            onSessionClicked = onSessionClicked
+        if(sessionList.isEmpty()){
+            EmptyText()
+        } else{
+            SessionList(
+                sessionList = sessionList,
+                modifier = Modifier.padding(
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = Constants.BottomNavHeight + 8.dp
+                ),
+                onSessionClicked = onSessionClicked
+            )
+        }
+
+    }
+}
+@Composable
+private fun EmptyText(){
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+        Text(
+            text = stringResource(R.string.no_statistics),
+            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.onSurface.copy(alpha = Constants.ALPHA_GREY)
         )
     }
 }
-
 
 @Composable
 private fun HeaderRow(
@@ -259,7 +273,11 @@ private fun SessionItem(
                     contentDescription = "Strain image",
                     modifier = Modifier
                         .padding(10.dp)
-                        .border(1.dp, MaterialTheme.colors.secondary.copy(alpha = Constants.ALPHA_GREY), shape)
+                        .border(
+                            1.dp,
+                            MaterialTheme.colors.secondary.copy(alpha = Constants.ALPHA_GREY),
+                            shape
+                        )
                         .clip(shape)
                         .size(55.dp)
 
@@ -278,7 +296,7 @@ private fun SessionItem(
                 )
                 val grams = (session.amount * session.amountType.weight)
                 val price = (grams * session.pricePerGram)
-                val sessionInfo = "${grams.formatZero()}g - ${price.formatZero()}$"
+                val sessionInfo = "${grams.formatZero()}g  -  ${price.formatZero()}$"
                 Text(
                     color = MaterialTheme.colors.primary,
                     style = MaterialTheme.typography.body1.copy(fontSize = 14.sp),

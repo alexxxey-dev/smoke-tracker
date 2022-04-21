@@ -25,4 +25,6 @@
     <string name="test_yourself">Test yourself</string>
     <string name="amount">Amount</string>
     <string name="save">Save</string>
+
+    <string name="no_statistics">No statistics yet</string>
 </resources>

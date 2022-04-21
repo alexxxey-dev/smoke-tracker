@@ -17,6 +17,15 @@ fun currentRoute(navController: NavController):String?{
 
 fun String.removeCommas() = this.replace(",", "").replace(".", "")
 
+fun String.countCommas() :Int{
+    var counter = 0
+    this.forEach {
+        if(it == '.' || it == ',') counter++
+    }
+    return counter
+}
+
+fun String.double() = this.replace(",", ".").toDouble()
 
 fun Double.formatZero() = (if (this.toInt().toDouble() == this) {
     DecimalFormat("#.##").apply {

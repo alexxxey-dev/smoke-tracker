@@ -7,6 +7,7 @@ import com.eatmybrain.smoketracker.data.Repository
 import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.amountType
+import com.eatmybrain.smoketracker.util.double
 import com.eatmybrain.smoketracker.util.removeCommas
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -103,11 +104,11 @@ class AddSessionViewModel @AssistedInject constructor(
         }
         addSession(
             strainName = strainName,
-            pricePerGram = pricePerGram.toDouble(),
+            pricePerGram = pricePerGram.double(),
             moodBefore = moodBefore,
             moodAfter = moodAfter,
             highStrength = highStrength,
-            amount = amount.toDouble(),
+            amount = amount.double(),
             amountType = amountType.amountType()
         )
 

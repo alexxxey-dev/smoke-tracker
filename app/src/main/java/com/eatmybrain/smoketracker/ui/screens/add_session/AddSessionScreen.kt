@@ -48,12 +48,11 @@ import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Constants
+import com.eatmybrain.smoketracker.util.countCommas
 import com.eatmybrain.smoketracker.util.formatZero
 import com.eatmybrain.smoketracker.util.removeCommas
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
-
-
 
 
 @Composable
@@ -65,7 +64,7 @@ fun AddSessionScreen(
     navigateHome: () -> Unit
 ) {
     val session by viewModel.session.observeAsState()
-    if(session==null && sessionTimestamp!=0L) return
+    if (session == null && sessionTimestamp != 0L) return
 
     var strainName by remember { mutableStateOf(session?.strainInfo?.title ?: "") }
     var price by remember { mutableStateOf(session?.pricePerGram?.formatZero() ?: "") }
@@ -73,7 +72,11 @@ fun AddSessionScreen(
     var moodAfter by remember { mutableStateOf(session?.moodAfter ?: 0f) }
     var highStrength by remember { mutableStateOf(session?.highStrength ?: 0) }
     var amount by remember { mutableStateOf(session?.amount?.formatZero() ?: "") }
-    var amountType by remember { mutableStateOf(session?.amountType?.string() ?: AmountType.Gram.string()) }
+    var amountType by remember {
+        mutableStateOf(
+            session?.amountType?.string() ?: AmountType.Gram.string()
+        )
+    }
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -123,7 +126,6 @@ fun AddSessionScreen(
 
 
 }
-
 
 
 @Composable
@@ -355,7 +357,9 @@ private fun AmountEditText(amount: String, onAmountChanged: (String) -> Unit) {
         BasicTextField(
             value = amount,
             onValueChange = {
-                if (it.removeCommas().length <= 2) onAmountChanged(it)
+                if (it.removeCommas().length <= 2 && it.countCommas() <= 1) {
+                    onAmountChanged(it)
+                }
             },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             singleLine = true,
@@ -588,7 +592,9 @@ private fun PriceEditText(
         }
         BasicTextField(
             value = price,
-            onValueChange = { if (it.removeCommas().length <= 4) onPriceChange(it) },
+            onValueChange = {
+                if (it.removeCommas().length <= 4 && it.countCommas() <= 1) onPriceChange(it)
+            },
             textStyle = MaterialTheme.typography.body2,
             keyboardOptions = KeyboardOptions.Default.copy(
                 capitalization = KeyboardCapitalization.Sentences,
