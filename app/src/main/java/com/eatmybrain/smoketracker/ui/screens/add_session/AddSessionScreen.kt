@@ -367,8 +367,7 @@ private fun AmountEditText(amount: String, onAmountChanged: (String) -> Unit) {
                 keyboardController?.hide()
                 focusManager.clearFocus()
             }),
-            modifier = Modifier.padding(start = 4.dp, end = 4.dp),
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
         )
     }
 }
