@@ -50,7 +50,6 @@ object FakeRepository {
                 amountType = AmountType.Gram,
                 strainInfo = StrainInfo("https://atlas-content-cdn.pixelsquid.com/stock-images/marijuana-bud-mda4Xn1-600.jpg", "Big Bud", 5.0)
             ),
-            //Year period
             Session(
                 timestamp = currentTime - TimeUnit.DAYS.toMillis(60),
                 amount = 7.8,

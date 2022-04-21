@@ -1,14 +1,19 @@
 package com.eatmybrain.smoketracker.ui.screens.add_session
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -19,6 +24,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -26,12 +32,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
@@ -40,7 +46,6 @@ import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Constants
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 private val AlphaSecondary = 0.4f
@@ -60,6 +65,7 @@ fun AddSessionScreen(
     var highStrength by rememberSaveable { mutableStateOf(0) }
     var amount by rememberSaveable { mutableStateOf("") }
     var amountType by rememberSaveable { mutableStateOf(AmountType.Gram.string()) }
+
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -108,7 +114,6 @@ fun AddSessionScreen(
 
 
 }
-
 
 
 @Composable
@@ -218,103 +223,107 @@ private fun AmountTypeDropdown(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val width = 130.dp
-    val height = 30.dp
-    //TODO fix dropdown animation
-    AnimatedVisibility(expanded) {
-        Dropdown(
-            onAmountTypeChanged = onAmountTypeChanged,
-            onDismiss = { expanded = false },
-            height = height,
-            modifier = modifier.width(width)
-        )
-    }
+    val iconRotation by animateFloatAsState(targetValue = (if (expanded) 180f else 0f))
 
-    AnimatedVisibility(!expanded) {
-        DropdownStatus(
-            amountType = amountType,
-            modifier = modifier
-                .height(height)
-                .width(width),
-            onExpand = { expanded = true }
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun DropdownStatus(
-    amountType: String,
-    modifier: Modifier = Modifier,
-    onExpand: () -> Unit
-) {
-    Card(
-        border = BorderStroke(1.dp, MaterialTheme.colors.primary),
-        shape = RoundedCornerShape(8.dp),
+    DropdownCard(
+        onAmountTypeChanged = onAmountTypeChanged,
+        onExpand = { expanded = !expanded },
+        expanded = expanded,
+        currentAmountType = amountType,
         modifier = modifier,
-        onClick = onExpand
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = amountType,
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier
-                    .padding(start = 15.dp)
-                    .weight(1f)
-            )
-
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
-                contentDescription = "Expand dropdown",
-                modifier = Modifier.padding(end = 11.dp),
-                tint = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
-            )
-        }
-    }
+        iconRotation = iconRotation
+    )
 }
 
+
 @Composable
-private fun Dropdown(
+private fun DropdownCard(
+    expanded: Boolean,
     onAmountTypeChanged: (String) -> Unit,
-    onDismiss: () -> Unit,
-    height: Dp,
-    modifier: Modifier = Modifier
+    onExpand: () -> Unit,
+    modifier: Modifier = Modifier,
+    currentAmountType: String,
+    iconRotation:Float
 ) {
+    val width = 130.dp
+    val amountTypes = AmountType.values().toMutableList()
+
     Card(
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, MaterialTheme.colors.primary),
         modifier = modifier
+            .width(width)
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            ),
     ) {
         Column {
-            val amountTypes = AmountType.values()
-            amountTypes.forEach { type ->
-                Row(
-                    modifier = Modifier
-                        .clickable {
-                            onAmountTypeChanged(type)
-                            onDismiss()
-                        }
-                        .fillMaxWidth()
-                        .height(height),
-                    verticalAlignment = CenterVertically
-                ) {
-                    Text(
-                        text = type,
-                        color = MaterialTheme.colors.onBackground,
-                        style = MaterialTheme.typography.body1,
-                        modifier = Modifier.padding(start = 15.dp).weight(1f)
+            DropdownRow(
+                onAmountTypeChanged = onAmountTypeChanged,
+                onClick = onExpand,
+                amountType = currentAmountType,
+                showIcon = true,
+                iconRotation = iconRotation
+            )
+
+            if (expanded) {
+                amountTypes.apply { remove(currentAmountType) }.forEach { amountType ->
+                    DropdownRow(
+                        onAmountTypeChanged = onAmountTypeChanged,
+                        onClick = onExpand,
+                        amountType = amountType,
+                        showIcon = false,
+                        iconRotation = iconRotation
                     )
-                    if(type==amountTypes.first()){
-                        Icon(
-                            painter = painterResource(R.drawable.ic_arrow_down),
-                            contentDescription = "Expand dropdown",
-                            modifier = Modifier.padding(end = 11.dp),
-                            tint = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
-                        )
-                    }
                 }
             }
+        }
+
+
+    }
+}
+
+@Composable
+private fun DropdownRow(
+    onAmountTypeChanged: (String) -> Unit,
+    onClick: () -> Unit,
+    amountType: String,
+    showIcon: Boolean,
+    iconRotation: Float
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val height = 30.dp
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .clickable(
+                indication = null,
+                interactionSource = interactionSource
+            ) {
+                onAmountTypeChanged(amountType)
+                onClick()
+            },
+        verticalAlignment = CenterVertically
+    ) {
+        Text(
+            text = amountType,
+            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.body1,
+            modifier = Modifier
+                .padding(start = 15.dp)
+                .weight(1f)
+        )
+        if (showIcon) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                contentDescription = "Expand dropdown",
+                modifier = Modifier.padding(end = 11.dp).rotate(iconRotation),
+                tint = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+            )
         }
     }
 }
@@ -371,13 +380,10 @@ private fun HighStrength(
                 onHighStrengthChanged = { onHighStrengthChanged(it) },
                 modifier = Modifier.weight(1f)
             )
-            Text(
-                color = MaterialTheme.colors.primary,
-                style = MaterialTheme.typography.body1,
-                text = stringResource(R.string.test_yourself),
-                modifier = Modifier.clickable {
-                    onHighTestClicked()
-                }
+            ClickableText(
+                style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.primary),
+                text = AnnotatedString(stringResource(R.string.test_yourself)),
+                onClick = { onHighTestClicked() }
             )
         }
     }

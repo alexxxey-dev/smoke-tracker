@@ -289,7 +289,7 @@ private fun SessionItem(
                 Text(
                     color = MaterialTheme.colors.secondary,
                     style = MaterialTheme.typography.body2,
-                    text = Time.ddMMyyy(session.timestamp),
+                    text = Time.dayMonthYear(session.timestamp),
                     modifier = Modifier
                         .padding(top = 4.dp, end = 12.dp, bottom = 6.dp)
                         .fillMaxWidth(),
@@ -346,8 +346,7 @@ private fun Dropdown(
                         onDismiss()
                     },
                     modifier = Modifier
-                        .height((70 / sessionPeriods.size).dp)
-                        .width(100.dp),
+                        .height((70 / sessionPeriods.size).dp),
                     contentPadding = PaddingValues(
                         end = 27.dp,
                         start = 15.dp,

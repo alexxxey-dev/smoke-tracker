@@ -10,13 +10,13 @@ sealed class SessionsPeriod(
 ) {
     object Month : SessionsPeriod(R.string.per_month)
     object Week : SessionsPeriod(R.string.per_week)
-    object Year : SessionsPeriod(R.string.per_year)
+    object ThreeMonths : SessionsPeriod(R.string.per_three_months)
 
     companion object{
         fun values() = listOf(
             Week,
             Month,
-            Year
+            ThreeMonths
         )
     }
 
@@ -24,14 +24,14 @@ sealed class SessionsPeriod(
         return when(this) {
             Month -> 30
             Week -> 7
-            Year -> 365
+            ThreeMonths -> 90
         }
     }
     fun startTimestamp() : Long{
         return when(this) {
             Month -> System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30)
             Week -> System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
-            Year -> System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+            ThreeMonths -> System.currentTimeMillis() - TimeUnit.DAYS.toMillis(90)
         }
     }
 }

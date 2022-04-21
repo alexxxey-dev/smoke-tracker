@@ -9,21 +9,40 @@ import java.util.concurrent.TimeUnit
 class ChartDataParser {
 
     fun parse(sessionList: List<Session>, currentPeriod: SessionsPeriod): LineDataSet {
-        val daysList = ArrayList<Entry>()
+        val entryList = entryList(currentPeriod)
+        populateEntryList(entryList,sessionList)
 
-        repeat(currentPeriod.daysCount()){ dayIndex ->
-            daysList.add(Entry(dayIndex.toFloat(), 0.01f))
-        }
-
-        sessionList.forEach { session ->
-            val diff = session.timestamp - currentPeriod.startTimestamp()
-            val daysCount = currentPeriod.daysCount() - 1
-            val sessionDayIndex =  daysCount - TimeUnit.MILLISECONDS.toDays(diff).toInt()
-            val yValue = (session.amount * session.amountType.weight).toFloat()
-            daysList[sessionDayIndex].y += yValue
-        }
-
-
-        return LineDataSet(daysList, "")
+        return LineDataSet(entryList, "")
     }
+
+
+
+    private fun populateEntryList(
+        entryList:List<Entry>,
+        sessionList: List<Session>
+    ){
+        sessionList.forEach { session ->
+            val dayStartTimestamp = Time.startOfDay(session.timestamp).toFloat()
+            val yValue = (session.amount * session.amountType.weight).toFloat()
+            entryList.find { it.x == dayStartTimestamp }?.let {
+                it.y += yValue
+            }
+        }
+    }
+
+    private fun entryList(currentPeriod: SessionsPeriod):List<Entry>{
+        val entryList = ArrayList<Entry>()
+        val startTimestamp = currentPeriod.startTimestamp()
+
+        repeat(currentPeriod.daysCount()){ index ->
+            val dayIndex = (index + 1).toLong()
+            val dayTimestamp = (startTimestamp + TimeUnit.DAYS.toMillis(dayIndex))
+            val dayStartTimestamp = Time.startOfDay(dayTimestamp).toFloat()
+           entryList.add(Entry(dayStartTimestamp, 0.01f))
+        }
+        return entryList
+    }
+
+
+
 }
