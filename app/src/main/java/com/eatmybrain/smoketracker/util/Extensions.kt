@@ -15,7 +15,7 @@ fun currentRoute(navController: NavController):String?{
 
 
 
-
+fun String.removeCommas() = this.replace(",", "").replace(".", "")
 
 
 fun Double.formatZero() = (if (this.toInt().toDouble() == this) {

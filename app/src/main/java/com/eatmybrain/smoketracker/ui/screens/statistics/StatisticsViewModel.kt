@@ -1,7 +1,6 @@
 package com.eatmybrain.smoketracker.ui.screens.statistics
 
 import androidx.lifecycle.*
-import com.eatmybrain.smoketracker.data.FakeRepository
 import com.eatmybrain.smoketracker.data.Repository
 import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
@@ -57,10 +56,8 @@ class StatisticsViewModel @Inject constructor(
     private fun sessionsHistory(sessionsPeriod: SessionsPeriod): LiveData<List<Session>> {
         val history = MutableLiveData<List<Session>>()
         viewModelScope.launch {
-            //TODO
             history.value = withContext(Dispatchers.IO) {
                 repository.sessionHistory(sessionsPeriod).sortedByDescending { it.timestamp }
-              //  FakeRepository.sessionHistory(sessionsPeriod)
             }
         }
         return history
@@ -70,7 +67,7 @@ class StatisticsViewModel @Inject constructor(
         val moneySpent = MutableLiveData<Double>()
         viewModelScope.launch {
             moneySpent.value = withContext(Dispatchers.IO){
-                sessions.sumOf { it.amount * it.amountType.weight * it.strainInfo.gramPrice}
+                sessions.sumOf { it.amount * it.amountType.weight * it.pricePerGram}
             }
         }
         return moneySpent

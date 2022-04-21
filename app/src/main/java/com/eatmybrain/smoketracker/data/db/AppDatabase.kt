@@ -8,7 +8,7 @@ import com.eatmybrain.smoketracker.data.db.converters.StrainTypeConverter
 import com.eatmybrain.smoketracker.data.structs.Session
 
 
-@Database(entities = [Session::class], version = 4)
+@Database(entities = [Session::class], version = 5)
 @TypeConverters(AmountTypeConverter::class, StrainTypeConverter::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun sessionsDao() : SessionsDao

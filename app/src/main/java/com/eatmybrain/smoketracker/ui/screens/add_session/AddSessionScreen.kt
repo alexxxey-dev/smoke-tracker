@@ -1,5 +1,6 @@
 package com.eatmybrain.smoketracker.ui.screens.add_session
 
+import android.app.Activity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,7 +19,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -39,32 +40,40 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.eatmybrain.smoketracker.MainActivity
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.StyledButton
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Constants
+import com.eatmybrain.smoketracker.util.formatZero
+import com.eatmybrain.smoketracker.util.removeCommas
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
 
-private val AlphaSecondary = 0.4f
+
 
 
 @Composable
 fun AddSessionScreen(
-    viewModel: AddSessionViewModel = hiltViewModel(),
+    sessionTimestamp: Long,
+    viewModel: AddSessionViewModel = addSessionViewModel(sessionTimestamp),
     navigateToStrainInfo: (String) -> Unit,
     navigateToHighTest: () -> Unit,
     navigateHome: () -> Unit
 ) {
-    var strainName by rememberSaveable { mutableStateOf("") }
-    var price by rememberSaveable { mutableStateOf("") }
-    var moodBefore by rememberSaveable { mutableStateOf(0f) }
-    var moodAfter by rememberSaveable { mutableStateOf(0f) }
-    var highStrength by rememberSaveable { mutableStateOf(0) }
-    var amount by rememberSaveable { mutableStateOf("") }
-    var amountType by rememberSaveable { mutableStateOf(AmountType.Gram.string()) }
+    val session by viewModel.session.observeAsState()
+    if(session==null && sessionTimestamp!=0L) return
+
+    var strainName by remember { mutableStateOf(session?.strainInfo?.title ?: "") }
+    var price by remember { mutableStateOf(session?.pricePerGram?.formatZero() ?: "") }
+    var moodBefore by remember { mutableStateOf(session?.moodBefore ?: 0f) }
+    var moodAfter by remember { mutableStateOf(session?.moodAfter ?: 0f) }
+    var highStrength by remember { mutableStateOf(session?.highStrength ?: 0) }
+    var amount by remember { mutableStateOf(session?.amount?.formatZero() ?: "") }
+    var amountType by remember { mutableStateOf(session?.amountType?.string() ?: AmountType.Gram.string()) }
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -114,6 +123,7 @@ fun AddSessionScreen(
 
 
 }
+
 
 
 @Composable
@@ -200,7 +210,7 @@ private fun Amount(
     Column(modifier) {
         Text(
             style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onBackground.copy(alpha = AlphaSecondary),
+            color = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY),
             text = stringResource(R.string.amount)
         )
 
@@ -243,7 +253,7 @@ private fun DropdownCard(
     onExpand: () -> Unit,
     modifier: Modifier = Modifier,
     currentAmountType: String,
-    iconRotation:Float
+    iconRotation: Float
 ) {
     val width = 130.dp
     val amountTypes = AmountType.values().toMutableList()
@@ -321,8 +331,10 @@ private fun DropdownRow(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_down),
                 contentDescription = "Expand dropdown",
-                modifier = Modifier.padding(end = 11.dp).rotate(iconRotation),
-                tint = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+                modifier = Modifier
+                    .padding(end = 11.dp)
+                    .rotate(iconRotation),
+                tint = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY)
             )
         }
     }
@@ -343,7 +355,7 @@ private fun AmountEditText(amount: String, onAmountChanged: (String) -> Unit) {
         BasicTextField(
             value = amount,
             onValueChange = {
-                if (it.length <= 2) onAmountChanged(it)
+                if (it.removeCommas().length <= 2) onAmountChanged(it)
             },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             singleLine = true,
@@ -367,7 +379,7 @@ private fun HighStrength(
     Column(modifier) {
         Text(
             style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onBackground.copy(alpha = AlphaSecondary),
+            color = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY),
             text = stringResource(R.string.high)
         )
 
@@ -454,7 +466,7 @@ private fun Mood(
         Text(
             text = stringResource(R.string.mood_before),
             style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onBackground.copy(alpha = AlphaSecondary)
+            color = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY)
         )
         Slider(
             value = moodBefore,
@@ -465,7 +477,7 @@ private fun Mood(
         Text(
             text = stringResource(R.string.mood_after),
             style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onBackground.copy(alpha = AlphaSecondary),
+            color = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY),
             modifier = Modifier.padding(top = 12.dp)
         )
         Slider(
@@ -500,7 +512,7 @@ private fun Title(
                 painter = painterResource(R.drawable.ic_info),
                 modifier = Modifier.size(20.dp),
                 contentDescription = "Strain info",
-                tint = MaterialTheme.colors.onBackground.copy(alpha = AlphaSecondary)
+                tint = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY)
             )
         }
 
@@ -518,7 +530,7 @@ private fun TitleEditText(
         if (strainName.isEmpty()) {
             Text(
                 style = MaterialTheme.typography.h1,
-                color = MaterialTheme.colors.onBackground.copy(alpha = AlphaSecondary),
+                color = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY),
                 text = stringResource(R.string.strain_name)
             )
         }
@@ -570,13 +582,13 @@ private fun PriceEditText(
         if (price.isEmpty()) {
             Text(
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground.copy(alpha = AlphaSecondary),
+                color = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY),
                 text = stringResource(R.string.price_per_gram)
             )
         }
         BasicTextField(
             value = price,
-            onValueChange = { if (it.length <= 4) onPriceChange(it) },
+            onValueChange = { if (it.removeCommas().length <= 4) onPriceChange(it) },
             textStyle = MaterialTheme.typography.body2,
             keyboardOptions = KeyboardOptions.Default.copy(
                 capitalization = KeyboardCapitalization.Sentences,
@@ -589,6 +601,15 @@ private fun PriceEditText(
             })
         )
     }
+}
+
+@Composable
+private fun addSessionViewModel(timestamp: Long): AddSessionViewModel {
+    val factory = EntryPointAccessors.fromActivity(
+        LocalContext.current as Activity,
+        MainActivity.ViewModelFactoryProvider::class.java
+    ).addSessionViewModelFactory()
+    return viewModel(factory = AddSessionViewModel.provideFactory(factory, timestamp))
 }
 
 @Preview

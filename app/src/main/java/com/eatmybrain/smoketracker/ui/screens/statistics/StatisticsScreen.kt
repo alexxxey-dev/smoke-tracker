@@ -259,7 +259,7 @@ private fun SessionItem(
                     contentDescription = "Strain image",
                     modifier = Modifier
                         .padding(10.dp)
-                        .border(1.dp, MaterialTheme.colors.secondary.copy(alpha = 0.5f), shape)
+                        .border(1.dp, MaterialTheme.colors.secondary.copy(alpha = Constants.ALPHA_GREY), shape)
                         .clip(shape)
                         .size(55.dp)
 
@@ -277,7 +277,7 @@ private fun SessionItem(
                     text = session.strainInfo.title
                 )
                 val grams = (session.amount * session.amountType.weight)
-                val price = (grams * session.strainInfo.gramPrice)
+                val price = (grams * session.pricePerGram)
                 val sessionInfo = "${grams.formatZero()}g - ${price.formatZero()}$"
                 Text(
                     color = MaterialTheme.colors.primary,

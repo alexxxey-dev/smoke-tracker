@@ -9,9 +9,13 @@ import androidx.navigation.compose.rememberNavController
 import com.eatmybrain.smoketracker.ui.navigation.BottomNav
 import com.eatmybrain.smoketracker.ui.navigation.BottomNavItem
 import com.eatmybrain.smoketracker.ui.navigation.NavigationGraph
+import com.eatmybrain.smoketracker.ui.screens.add_session.AddSessionViewModel
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.currentRoute
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -25,6 +29,11 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @EntryPoint
+    @InstallIn(ActivityComponent::class)
+    interface ViewModelFactoryProvider {
+        fun addSessionViewModelFactory() : AddSessionViewModel.Factory
+    }
     @Composable
     fun AppScreen() {
         val navController = rememberNavController()

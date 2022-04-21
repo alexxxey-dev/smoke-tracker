@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
+import com.eatmybrain.smoketracker.util.Constants
 
 @Composable
 fun StrainSearchScreen(viewModel: StrainSearchViewModel = hiltViewModel()) {
@@ -127,7 +128,7 @@ fun SearchEditText(
                 text = stringResource(R.string.enter_strain_name),
                 style = MaterialTheme.typography.body1.copy(
                     fontSize = 14.sp,
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+                    color = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY)
                 ),
                 textAlign = TextAlign.Start
             )

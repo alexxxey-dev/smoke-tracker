@@ -2,13 +2,16 @@ package com.eatmybrain.smoketracker.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.eatmybrain.smoketracker.ui.screens.add_session.AddSessionScreen
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumScreen
 import com.eatmybrain.smoketracker.ui.screens.statistics.StatisticsScreen
 import com.eatmybrain.smoketracker.ui.screens.strain_search.StrainSearchScreen
 import com.eatmybrain.smoketracker.ui.screens.tolerance.ToleranceScreen
+import com.eatmybrain.smoketracker.util.Constants
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
@@ -19,10 +22,10 @@ fun NavigationGraph(navController: NavHostController) {
         composable(BottomNavItem.Statistics.screenRoute) {
             StatisticsScreen(
                 onAddSession = {
-                    navController.navigate(AppScreens.AddSession.screenRoute)
+                    navController.navigate("${AppScreens.AddSession.screenRoute}/${0L}")
                 },
                 onSessionClicked = {
-                    //TODO
+                    navController.navigate("${AppScreens.AddSession.screenRoute}/${it.timestamp}")
                 }
             )
         }
@@ -39,7 +42,13 @@ fun NavigationGraph(navController: NavHostController) {
             PremiumScreen()
         }
 
-        composable(AppScreens.AddSession.screenRoute) {
+        composable(
+            route = "${AppScreens.AddSession.screenRoute}/{${Constants.ARGUMENT_SESSION_TIMESTAMP}}",
+            arguments = listOf(
+                navArgument(Constants.ARGUMENT_SESSION_TIMESTAMP) { type = NavType.LongType }
+            )
+        ) {
+            val sessionTimestamp = it.arguments?.getLong(Constants.ARGUMENT_SESSION_TIMESTAMP) ?: 0
             AddSessionScreen(
                 navigateToStrainInfo = {
                     //TODO
@@ -49,7 +58,8 @@ fun NavigationGraph(navController: NavHostController) {
                 },
                 navigateHome = {
                     navController.navigate(BottomNavItem.Statistics.screenRoute)
-                }
+                },
+                sessionTimestamp = sessionTimestamp
             )
         }
     }

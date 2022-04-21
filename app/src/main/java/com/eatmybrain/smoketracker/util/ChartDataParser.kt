@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 class ChartDataParser {
 
-    fun parse(sessionList: List<Session>, currentPeriod: SessionsPeriod): LineDataSet {
+     fun parse(sessionList: List<Session>, currentPeriod: SessionsPeriod): LineDataSet {
         val entryList = entryList(currentPeriod)
         populateEntryList(entryList,sessionList)
 

@@ -9,12 +9,29 @@ import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
 
 class Repository(
     private val db: AppDatabase,
-    private val strainsApi:StrainsApi
+    private val strainsApi: StrainsApi
 ) {
-    suspend fun addSession(session:Session) {
-        db.sessionsDao().insert(session)
+    suspend fun addSession(session: Session) {
+        if (db.sessionsDao().exists(session.timestamp)) {
+            db.sessionsDao().update(session)
+        } else {
+            db.sessionsDao().insert(session)
+        }
+
     }
-    suspend fun strainInfo(strainName:String) : StrainInfo? {
+
+    suspend fun session(timestamp: Long): Session? {
+        return db.sessionsDao().byTimestamp(timestamp)
+    }
+
+    suspend fun strainInfo(strainName: String): StrainInfo {
+        return searchStrainInfo(strainName) ?: StrainInfo(
+            imageUrl = "",
+            title = strainName
+        )
+    }
+
+    suspend fun searchStrainInfo(strainName: String): StrainInfo? {
         return null
     }
 
