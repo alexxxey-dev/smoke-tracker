@@ -14,39 +14,39 @@ class MyDataStore(private val context:Context) {
 
     suspend fun saveSmokeFreq(smokeFreq:Int) {
         context.dataStore.edit {settings->
-            settings[SmokeInfoScheme.SMOKE_FREQ] = smokeFreq
+            settings[SessionsInfoScheme.SMOKE_FREQ] = smokeFreq
         }
     }
 
      fun getSmokeFreq(): Flow<Int> {
         return context.dataStore.data.map { prefs->
-            prefs[SmokeInfoScheme.SMOKE_FREQ] ?: 0
+            prefs[SessionsInfoScheme.SMOKE_FREQ] ?: 0
         }
     }
 
 
     suspend fun saveSmokeAmount(smokeAmount:Double) {
         context.dataStore.edit { settings->
-            settings[SmokeInfoScheme.SMOKE_AMOUNT] = smokeAmount
+            settings[SessionsInfoScheme.SMOKE_AMOUNT] = smokeAmount
         }
     }
 
     fun getSmokeAmount():Flow<Double>{
         return context.dataStore.data.map { prefs->
-            prefs[SmokeInfoScheme.SMOKE_AMOUNT] ?: 0.0
+            prefs[SessionsInfoScheme.SMOKE_AMOUNT] ?: 0.0
         }
     }
 
 
     suspend fun savePrice(price:Double) {
         context.dataStore.edit { settings->
-            settings[SmokeInfoScheme.AVERAGE_PRICE] = price
+            settings[SessionsInfoScheme.AVERAGE_PRICE] = price
         }
     }
 
     fun getPrice():Flow<Double> {
         return context.dataStore.data.map {
-            it[SmokeInfoScheme.AVERAGE_PRICE] ?: 0.0
+            it[SessionsInfoScheme.AVERAGE_PRICE] ?: 0.0
         }
     }
 }

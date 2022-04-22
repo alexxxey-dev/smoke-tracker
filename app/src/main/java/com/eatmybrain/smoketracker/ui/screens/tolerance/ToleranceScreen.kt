@@ -6,13 +6,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -22,13 +24,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
+import com.eatmybrain.smoketracker.data.structs.SessionsInfo
 import com.eatmybrain.smoketracker.ui.StyledButton
-import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
+import com.eatmybrain.smoketracker.ui.screens.tolerance.enums.DialogError
 import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.countCommas
 import com.eatmybrain.smoketracker.util.removeCommas
@@ -39,68 +41,92 @@ fun ToleranceScreen(
     navigateToResetTolerance: () -> Unit
 ) {
     val showDialog = remember { mutableStateOf(false) }
-    val dialogError = remember { mutableStateOf("") }
+    val dialogError = remember { mutableStateOf<DialogError?>(null) }
 
 
     Tolerance(
-        saveSmokeInfo = { freq, amount, price ->
-            return@Tolerance viewModel.saveSmokeInfo(freq, amount, price)
+        onSaveClicked = { info ->
+            if (dialogError.value == null) {
+                viewModel.saveSmokeData(info)
+                viewModel.startToleranceBreak()
+                navigateToResetTolerance()
+            }
         },
-        navigateToResetTolerance = navigateToResetTolerance,
         dialogError = dialogError,
-        showDialog = showDialog
+        showDialog = showDialog,
+        checkFreqError = {
+            dialogError.value = if (viewModel.checkFreqError(it))  DialogError.SMOKE_FREQ else  null
+        },
+        checkAmountError = {
+            dialogError.value = if (viewModel.checkAmountError(it))  DialogError.SMOKE_AMOUNT else  null
+        },
+        checkPriceError = {
+            dialogError.value = if  (viewModel.checkPriceError(it))  DialogError.PRICE else  null
+        }
     )
 }
 
 @Composable
 private fun Tolerance(
-    saveSmokeInfo: (String, String, String) -> Int?,
-    navigateToResetTolerance: () -> Unit,
-    dialogError: MutableState<String>,
-    showDialog: MutableState<Boolean>
+    onSaveClicked: (SessionsInfo) -> Unit,
+    dialogError: MutableState<DialogError?>,
+    showDialog: MutableState<Boolean>,
+    checkFreqError: (String) -> Unit,
+    checkAmountError: (String) -> Unit,
+    checkPriceError: (String) -> Unit
 ) {
-    val context = LocalContext.current
-    SmokeInfoDialog(
-        saveSmokeInfo = { freq, amount, price ->
-            val result = saveSmokeInfo(freq, amount, price)
-            if (result == null) {
-                showDialog.value = false
-                dialogError.value = ""
-                navigateToResetTolerance()
-            } else {
-                val text = context.getString(result)
-                dialogError.value = text
-            }
+    SessionsInfoDialog(
+        onSaveClicked = { info ->
+            onSaveClicked(info)
         },
         showDialog = showDialog,
-        dialogError = dialogError
+        dialogError = dialogError,
+        checkFreqError = checkFreqError,
+        checkAmountError = checkAmountError,
+        checkPriceError = checkPriceError
     )
 
     ToleranceScreenContent(showDialog)
 }
 
 @Composable
-private fun SmokeInfoDialog(
-    saveSmokeInfo: (String, String, String) -> Unit,
+private fun SessionsInfoDialog(
+    onSaveClicked: (SessionsInfo) -> Unit,
     showDialog: MutableState<Boolean>,
-    dialogError: MutableState<String>
+    dialogError: MutableState<DialogError?>,
+    checkFreqError: (String) -> Unit,
+    checkAmountError: (String) -> Unit,
+    checkPriceError: (String) -> Unit
 ) {
     var smokeFreq by remember { mutableStateOf("") }
     var smokeAmount by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
 
+
     if (showDialog.value) {
         Dialog(
             onDismissRequest = { showDialog.value = false }
         ) {
-            SmokeInfoDialogUI(
-                onSaveClicked = { saveSmokeInfo(smokeFreq, smokeAmount, price) },
+            SessionsInfoDialogUI(
+                onSaveClicked = {
+                    val info = SessionsInfo(smokeFreq, smokeAmount, price)
+                    onSaveClicked(info)
+                },
                 smokeFreq = smokeFreq,
                 smokeAmount = smokeAmount,
                 price = price,
-                onSmokeAmountUpdate = { smokeAmount = it },
-                onSmokeFreqUpdate = { smokeFreq = it },
-                onPriceUpdate = { price = it },
+                onSmokeAmountUpdate = {
+                    smokeAmount = it
+                    checkAmountError(it)
+                },
+                onSmokeFreqUpdate = {
+                    smokeFreq = it
+                    checkFreqError(it)
+                },
+                onPriceUpdate = {
+                    price = it
+                    checkPriceError(it)
+                },
                 dialogError = dialogError
             )
         }
@@ -110,9 +136,9 @@ private fun SmokeInfoDialog(
 
 
 @Composable
-private fun SmokeInfoDialogUI(
+private fun SessionsInfoDialogUI(
     onSaveClicked: () -> Unit,
-    dialogError: MutableState<String>,
+    dialogError: MutableState<DialogError?>,
     smokeFreq: String,
     smokeAmount: String,
     price: String,
@@ -142,7 +168,8 @@ private fun SmokeInfoDialogUI(
                 modifier = Modifier.padding(top = 12.dp),
                 allowCommas = false,
                 maxChars = 2,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Next,
+                isTextError = dialogError.value == DialogError.SMOKE_FREQ
             )
 
             Text(
@@ -159,7 +186,8 @@ private fun SmokeInfoDialogUI(
                 modifier = Modifier.padding(top = 12.dp),
                 allowCommas = true,
                 maxChars = 2,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Next,
+                isTextError = dialogError.value == DialogError.SMOKE_AMOUNT
             )
             Text(
                 text = stringResource(R.string.average_price),
@@ -175,7 +203,8 @@ private fun SmokeInfoDialogUI(
                 modifier = Modifier.padding(top = 12.dp),
                 allowCommas = true,
                 maxChars = 3,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Done,
+                isTextError = dialogError.value == DialogError.PRICE
             )
 
             StyledButton(
@@ -201,7 +230,8 @@ private fun EditTextRow(
     modifier: Modifier = Modifier,
     allowCommas: Boolean,
     maxChars: Int,
-    imeAction: ImeAction
+    imeAction: ImeAction,
+    isTextError: Boolean
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -220,7 +250,7 @@ private fun EditTextRow(
                     }
                 },
                 textStyle = MaterialTheme.typography.body2.copy(
-                    color = MaterialTheme.colors.primary,
+                    color = if (isTextError) MaterialTheme.colors.onError else MaterialTheme.colors.primary,
                     textAlign = TextAlign.Center
                 ),
                 singleLine = true,
@@ -240,7 +270,7 @@ private fun EditTextRow(
             )
 
             Divider(
-                color = MaterialTheme.colors.primary,
+                color = if (isTextError) MaterialTheme.colors.onError else MaterialTheme.colors.primary,
                 thickness = 1.dp,
                 modifier = Modifier.padding(top = 1.dp)
             )
@@ -250,7 +280,7 @@ private fun EditTextRow(
         Text(
             text = descriptionText,
             style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.primary,
+            color = if (isTextError) MaterialTheme.colors.onError else MaterialTheme.colors.primary,
             modifier = Modifier.padding(start = 11.dp)
         )
     }
@@ -327,20 +357,3 @@ fun AdviceItem(advice: String, modifier: Modifier = Modifier) {
     }
 }
 
-
-@Preview
-@Composable
-private fun TolerancePreview() {
-    SmokeTrackerTheme {
-        Scaffold {
-            Tolerance(
-                saveSmokeInfo = { freq, amount, price ->
-                    return@Tolerance null
-                },
-                navigateToResetTolerance = {},
-                dialogError = remember { mutableStateOf("") },
-                showDialog = remember { mutableStateOf(true) }
-            )
-        }
-    }
-}

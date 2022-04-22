@@ -16,7 +16,8 @@ private val LightColorPalette = lightColors(
     surface = White,
     secondary = Grey,
     onBackground = SoftBlack,
-    onSurface = SoftBlack
+    onSurface = SoftBlack,
+    onError = Red
 )
 
 @OptIn(ExperimentalFoundationApi::class)
