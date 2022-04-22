@@ -4,14 +4,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.currentRoute
 
@@ -26,7 +24,7 @@ fun BottomNav(navController: NavController) {
 
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.background,
-        modifier = Modifier.height(Constants.BottomNavHeight)
+        modifier = Modifier.height(Constants.BOTTOM_NAV_HEIGHT)
     ) {
         val currentRoute = currentRoute(navController)
         items.forEach { item ->

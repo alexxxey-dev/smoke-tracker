@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.eatmybrain.smoketracker.ui.screens.add_session.AddSessionScreen
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumScreen
+import com.eatmybrain.smoketracker.ui.screens.reset_tolerance.ResetToleranceScreen
 import com.eatmybrain.smoketracker.ui.screens.statistics.StatisticsScreen
 import com.eatmybrain.smoketracker.ui.screens.strain_search.StrainSearchScreen
 import com.eatmybrain.smoketracker.ui.screens.tolerance.ToleranceScreen
@@ -29,9 +30,16 @@ fun NavigationGraph(navController: NavHostController) {
                 }
             )
         }
+        composable(AppScreens.ResetTolerance.screenRoute){
+            ResetToleranceScreen()
+        }
 
         composable(BottomNavItem.Tolerance.screenRoute) {
-            ToleranceScreen()
+            ToleranceScreen(
+                onStartBreak = {
+                    navController.navigate(AppScreens.ResetTolerance.screenRoute)
+                }
+            )
         }
 
         composable(BottomNavItem.StrainSearch.screenRoute) {

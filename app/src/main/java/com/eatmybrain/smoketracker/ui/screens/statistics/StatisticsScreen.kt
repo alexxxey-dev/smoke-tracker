@@ -110,7 +110,7 @@ private fun Statistics(
                 modifier = Modifier.padding(
                     start = 12.dp,
                     end = 12.dp,
-                    bottom = Constants.BottomNavHeight + 8.dp
+                    bottom = Constants.BOTTOM_NAV_HEIGHT + 8.dp
                 ),
                 onSessionClicked = onSessionClicked
             )

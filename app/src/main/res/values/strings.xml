@@ -27,4 +27,25 @@
     <string name="save">Save</string>
 
     <string name="no_statistics">No statistics yet</string>
+    <string name="advice">Advices</string>
+
+    <string name="smoke_freq_empty">Smoke frequency can\'t be empty</string>
+    <string name="smoke_freq_zero">Smoke frequency can\'t be zero</string>
+    <string name="smoke_amount_empty">Smoke amount can\'t be empty</string>
+    <string name="smoke_amount_zero">Smoke amount can\'t be zero</string>
+    <string name="price_empty">Price can\'t be empty</string>
+    <string name="price_zero">Price can\'t be zero</string>
+
+    <string name="smoke_freq_incorrect">Incorrect smoke frequency</string>
+    <string name="price_incorrect">Incorrect average price</string>
+    <string name="smoke_amount_incorrect">Incorrect smoke amount </string>
+    <string-array name="advices">
+        <item>Use less per session</item>
+        <item>Smoke different strains</item>
+        <item>Don\'t smoke at the morning</item>
+        <item>Do more sports</item>
+        <item>Practice mindfulness</item>
+        <item>Take a break</item>
+    </string-array>
+    <string name="reset_tolerance">Take a break</string>
 </resources>

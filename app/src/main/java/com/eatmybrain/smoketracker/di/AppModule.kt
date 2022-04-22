@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.eatmybrain.smoketracker.data.Repository
 import com.eatmybrain.smoketracker.data.api.StrainsApi
+import com.eatmybrain.smoketracker.data.data_store.DataStoreUtil
 import com.eatmybrain.smoketracker.data.db.AppDatabase
 import com.eatmybrain.smoketracker.util.ChartDataParser
 import com.eatmybrain.smoketracker.util.Constants
@@ -23,10 +24,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit():Retrofit = Retrofit.Builder()
+    fun provideRetrofit(): Retrofit = Retrofit.Builder()
         .baseUrl(Constants.STRAINS_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+    @Provides
+    @Singleton
+    fun provideDataStoreUtil(@ApplicationContext context: Context): DataStoreUtil =
+        DataStoreUtil(context)
 
     @Provides
     @Singleton
@@ -35,14 +41,16 @@ object AppModule {
     @Provides
     @Singleton
     fun provideChartDataParser() = ChartDataParser()
+
     @Provides
     @Singleton
-    fun provideDb(@ApplicationContext context: Context):AppDatabase = Room
+    fun provideDb(@ApplicationContext context: Context): AppDatabase = Room
         .databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME)
         .fallbackToDestructiveMigration()
         .build()
 
     @Provides
     @Singleton
-    fun provideRepository(db: AppDatabase, strainsApi: StrainsApi) = Repository(db,strainsApi)
+    fun provideRepository(db: AppDatabase, strainsApi: StrainsApi, dataStoreUtil: DataStoreUtil) =
+        Repository(db, strainsApi, dataStoreUtil)
 }
