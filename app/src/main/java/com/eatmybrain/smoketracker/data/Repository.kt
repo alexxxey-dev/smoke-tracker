@@ -2,7 +2,7 @@ package com.eatmybrain.smoketracker.data
 
 
 import  com.eatmybrain.smoketracker.data.api.StrainsApi
-import com.eatmybrain.smoketracker.data.data_store.DataStoreUtil
+import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import com.eatmybrain.smoketracker.data.db.AppDatabase
 import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.data.structs.StrainInfo
@@ -11,7 +11,7 @@ import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
 class Repository(
     private val db: AppDatabase,
     private val strainsApi: StrainsApi,
-    private val dataStore: DataStoreUtil
+    private val myDataStore: MyDataStore
 ) {
     suspend fun addSession(session: Session) {
         if (db.sessionsDao().exists(session.timestamp)) {
@@ -42,7 +42,7 @@ class Repository(
         smokeAmount: Double,
         price: Double
     ) {
-        dataStore.apply {
+        myDataStore.apply {
             savePrice(price)
             saveSmokeAmount(smokeAmount)
             saveSmokeFreq(smokeFreq)

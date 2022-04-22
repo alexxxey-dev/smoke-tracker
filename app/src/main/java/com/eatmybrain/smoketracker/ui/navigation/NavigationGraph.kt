@@ -36,7 +36,7 @@ fun NavigationGraph(navController: NavHostController) {
 
         composable(BottomNavItem.Tolerance.screenRoute) {
             ToleranceScreen(
-                onStartBreak = {
+                navigateToResetTolerance = {
                     navController.navigate(AppScreens.ResetTolerance.screenRoute)
                 }
             )

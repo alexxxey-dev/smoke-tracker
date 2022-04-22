@@ -17,7 +17,7 @@ class ToleranceViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
-    fun onSaveClicked(
+    fun saveSmokeInfo(
         smokeFreq: String,
         smokeAmount: String,
         price: String

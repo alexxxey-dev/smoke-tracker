@@ -9,7 +9,7 @@ import com.eatmybrain.smoketracker.util.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class DataStoreUtil(private val context:Context) {
+class MyDataStore(private val context:Context) {
     private val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = Constants.DATA_STORE_NAME)
 
     suspend fun saveSmokeFreq(smokeFreq:Int) {

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.eatmybrain.smoketracker.data.Repository
 import com.eatmybrain.smoketracker.data.api.StrainsApi
-import com.eatmybrain.smoketracker.data.data_store.DataStoreUtil
+import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import com.eatmybrain.smoketracker.data.db.AppDatabase
 import com.eatmybrain.smoketracker.util.ChartDataParser
 import com.eatmybrain.smoketracker.util.Constants
@@ -31,8 +31,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDataStoreUtil(@ApplicationContext context: Context): DataStoreUtil =
-        DataStoreUtil(context)
+    fun provideDataStoreUtil(@ApplicationContext context: Context): MyDataStore =
+        MyDataStore(context)
 
     @Provides
     @Singleton
@@ -51,6 +51,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(db: AppDatabase, strainsApi: StrainsApi, dataStoreUtil: DataStoreUtil) =
-        Repository(db, strainsApi, dataStoreUtil)
+    fun provideRepository(db: AppDatabase, strainsApi: StrainsApi, myDataStore: MyDataStore) =
+        Repository(db, strainsApi, myDataStore)
 }

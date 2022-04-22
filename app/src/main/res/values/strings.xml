@@ -11,7 +11,6 @@
     <string name="strain_name">Strain name…</string>
     <string name="price_per_gram">Price per gram…</string>
 
-    <string name="add_session_success">add_session_success</string>
     <string name="strain_name_empty">Please enter strain name</string>
     <string name="price_per_gram_empty">Please enter price</string>
     <string name="price_per_gram_digits">Price can\'t be a string</string>
@@ -48,4 +47,12 @@
         <item>Take a break</item>
     </string-array>
     <string name="reset_tolerance">Take a break</string>
+    
+    <string name="how_often_smoke">How often do you smoke?</string>
+    <string name="how_much_smoke">How much do you smoke?</string>
+    <string name="average_price">Average price per gram</string>
+
+    <string name="times_a_week">times a week</string>
+    <string name="grams">grams</string>
+    <string name="dollars">dollar(s)</string>
 </resources>
