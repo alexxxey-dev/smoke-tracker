@@ -34,12 +34,14 @@ val Typography = Typography(
     body1 = TextStyle(
         fontFamily = Lato,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        lineHeight = 24.sp
     ),
     body2 = TextStyle(
         fontFamily = Lato,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+        fontSize = 12.sp,
+        lineHeight = 24.sp
     ),
     subtitle1 = TextStyle(
         fontFamily = Comfortaa,

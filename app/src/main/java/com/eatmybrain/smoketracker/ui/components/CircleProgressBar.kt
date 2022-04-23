@@ -24,7 +24,7 @@ fun CircleProgressBar(
     timeLeft: Long,
     percentage: Float,
     radius: Dp = 120.dp,
-    strokeWidth: Dp = 15.dp
+    strokeWidth: Dp = 18.dp
 ) {
     Box(
         contentAlignment = Alignment.Center,

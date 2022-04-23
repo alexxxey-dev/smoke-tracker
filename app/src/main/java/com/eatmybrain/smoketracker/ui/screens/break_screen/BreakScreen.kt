@@ -39,7 +39,7 @@ fun BreakScreen(viewModel: BreakViewModel = hiltViewModel(), navigateToAchieveme
                 start = 12.dp,
                 end = 12.dp,
                 bottom = Constants.BOTTOM_NAV_HEIGHT + 16.dp,
-                top = 22.dp
+                top = 30.dp
             )
             .fillMaxSize(),
         totalTime = totalTime!!,
@@ -74,39 +74,39 @@ fun BreakScreenContent(
         )
 
         Row(
-            horizontalArrangement = Arrangement.SpaceAround,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .weight(1f)
-                .padding(top = 27.dp)
+                .padding(top = 60.dp)
                 .fillMaxWidth()
         ) {
             StatsCard(
                 title = stringResource(R.string.money_saved),
                 subtitle = moneySaved,
-                modifier = Modifier.padding(end = 18.dp)
+                modifier = Modifier.padding(end = 20.dp)
             )
             StatsCard(
                 title = stringResource(R.string.weed_free_time),
                 subtitle = weedFreeTime,
-                modifier = Modifier.padding(end = 18.dp)
+                modifier = Modifier.padding(end = 20.dp)
             )
             StatsCard(title = stringResource(R.string.grams_not_smoked), subtitle = gramsAvoided)
         }
 
 
-        Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             StyledButton(
                 text = stringResource(R.string.stop),
                 onClick = stopBreak,
                 icon = null,
-                modifier = Modifier.height(45.dp)
+                modifier = Modifier.height(45.dp).padding(start = 6.dp)
             )
 
             StyledButton(
                 text = stringResource(R.string.achievements),
                 onClick = navigateToAchievements,
                 icon = painterResource(R.drawable.ic_achievements),
-                modifier = Modifier.height(45.dp)
+                modifier = Modifier.height(45.dp).padding(end = 6.dp)
             )
         }
 
@@ -118,7 +118,7 @@ fun StatsCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.size(width = 100.dp, height = 110.dp),
         shape = RoundedCornerShape(8.dp),
-        elevation = 8.dp
+        elevation = 2.dp
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,14 +128,16 @@ fun StatsCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
                 text = title,
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onSurface,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 10.dp)
             )
 
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.primary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 5.dp)
             )
         }
     }
