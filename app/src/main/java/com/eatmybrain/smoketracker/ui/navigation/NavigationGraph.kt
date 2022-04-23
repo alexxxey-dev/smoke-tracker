@@ -11,11 +11,11 @@ import com.eatmybrain.smoketracker.ui.screens.premium.PremiumScreen
 import com.eatmybrain.smoketracker.ui.screens.statistics.StatisticsScreen
 import com.eatmybrain.smoketracker.ui.screens.strain_search.StrainSearchScreen
 import com.eatmybrain.smoketracker.ui.screens.tolerance_advice.ToleranceAdviceScreen
-import com.eatmybrain.smoketracker.ui.screens.tolerance_break.ToleranceBreakScreen
+import com.eatmybrain.smoketracker.ui.screens.tolerance_break.BreakScreen
 import com.eatmybrain.smoketracker.util.Constants
 
 @Composable
-fun NavigationGraph(navController: NavHostController, toleranceBreakActive:Boolean) {
+fun NavigationGraph(navController: NavHostController, breakActive:Boolean) {
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Statistics.screenRoute
@@ -33,8 +33,8 @@ fun NavigationGraph(navController: NavHostController, toleranceBreakActive:Boole
 
 
         composable(BottomNavItem.Tolerance.screenRoute) {
-            if(toleranceBreakActive){
-                ToleranceBreakScreen()
+            if(breakActive){
+                BreakScreen()
             } else{
                 ToleranceAdviceScreen()
             }

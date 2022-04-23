@@ -1,7 +1,7 @@
 package com.eatmybrain.smoketracker.ui.screens.statistics
 
 import androidx.lifecycle.*
-import com.eatmybrain.smoketracker.data.Repository
+import com.eatmybrain.smoketracker.data.SessionsRepository
 import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
 import com.eatmybrain.smoketracker.util.ChartDataParser
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
-    private val repository: Repository,
+    private val sessionsRepository: SessionsRepository,
     private val chartDataParser: ChartDataParser
 ) : ViewModel() {
 
@@ -57,7 +57,7 @@ class StatisticsViewModel @Inject constructor(
         val history = MutableLiveData<List<Session>>()
         viewModelScope.launch {
             history.value = withContext(Dispatchers.IO) {
-                repository.sessionHistory(sessionsPeriod).sortedByDescending { it.timestamp }
+                sessionsRepository.sessionHistory(sessionsPeriod).sortedByDescending { it.timestamp }
             }
         }
         return history

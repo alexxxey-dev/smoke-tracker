@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun AppScreen() {
-        val toleranceBreakActive by viewModel.isToleranceBreakActive.collectAsState(initial = false)
+        val breakActive by viewModel.isBreakActive.collectAsState(initial = false)
         val navController = rememberNavController()
         val currentRoute = currentRoute(navController)
 
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
         }) {
             NavigationGraph(
                 navController = navController,
-                toleranceBreakActive = toleranceBreakActive
+                breakActive = breakActive
             )
         }
     }

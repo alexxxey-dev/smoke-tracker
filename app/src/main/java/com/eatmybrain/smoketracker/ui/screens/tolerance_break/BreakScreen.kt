@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,14 +15,14 @@ import com.eatmybrain.smoketracker.util.Constants
 
 
 @Composable
-fun ToleranceBreakScreen(viewModel: ToleranceBreakViewModel = hiltViewModel()) {
-    ToleranceBreak(
-        stopToleranceBreak = { viewModel.toggleToleranceBreak() }
+fun BreakScreen(viewModel: BreakViewModel = hiltViewModel()) {
+    Break(
+        stopBreak = { viewModel.toggleBreak() }
     )
 }
 
 @Composable
-fun ToleranceBreak(stopToleranceBreak: () -> Unit) {
+fun Break(stopBreak: () -> Unit) {
 
     Column(
         modifier = Modifier
@@ -37,7 +36,7 @@ fun ToleranceBreak(stopToleranceBreak: () -> Unit) {
     ) {
         StyledButton(
             text = stringResource(R.string.stop),
-            onClick = stopToleranceBreak,
+            onClick = stopBreak,
             icon = null,
             modifier = Modifier.height(45.dp)
         )

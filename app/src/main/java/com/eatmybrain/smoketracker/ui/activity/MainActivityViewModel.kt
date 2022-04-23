@@ -1,16 +1,15 @@
 package com.eatmybrain.smoketracker.ui.activity
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import com.eatmybrain.smoketracker.data.Repository
+import com.eatmybrain.smoketracker.data.BreakRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: BreakRepository
 ) : ViewModel(){
 
-    val isToleranceBreakActive = repository.isToleranceBreakActive()
+    val isBreakActive = repository.isBreakActive()
 }

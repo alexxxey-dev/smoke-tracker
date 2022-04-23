@@ -3,8 +3,9 @@ package com.eatmybrain.smoketracker.ui.screens.tolerance_advice
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eatmybrain.smoketracker.data.Repository
+import com.eatmybrain.smoketracker.data.BreakRepository
 import com.eatmybrain.smoketracker.data.structs.SessionsInfo
+import com.eatmybrain.smoketracker.util.BreakTimeCalculator
 import com.eatmybrain.smoketracker.util.double
 import com.eatmybrain.smoketracker.util.removeCommas
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ToleranceAdviceViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: BreakRepository
 ) : ViewModel() {
 
     fun checkFreqError(
@@ -50,22 +51,13 @@ class ToleranceAdviceViewModel @Inject constructor(
     }
 
 
-    fun saveSmokeData(
-        sessionsInfo: SessionsInfo
-    ) = viewModelScope.launch {
-        val smokeFreq = sessionsInfo.freq.toInt()
-        val smokeAmount = sessionsInfo.amount.double()
-        val price = sessionsInfo.price.double()
-        withContext(Dispatchers.IO) {
-            repository.saveSmokeData(
-                smokeFreq,
-                smokeAmount,
-                price
-            )
+    fun startBreak(sessionsInfo: SessionsInfo) = viewModelScope.launch{
+        val duration = BreakTimeCalculator.calculate(sessionsInfo)
+        val start = System.currentTimeMillis()
+        withContext(Dispatchers.IO){
+            repository.toggleBreak()
+            repository.saveBreakDuration(duration)
+            repository.saveBreakStart(start)
         }
-    }
-
-    fun startToleranceBreak() = viewModelScope.launch{
-        withContext(Dispatchers.IO) { repository.toggleToleranceBreak() }
     }
 }

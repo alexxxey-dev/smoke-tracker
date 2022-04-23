@@ -3,7 +3,9 @@ package com.eatmybrain.smoketracker.ui.screens.add_session
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.*
 import com.eatmybrain.smoketracker.R
-import com.eatmybrain.smoketracker.data.Repository
+import com.eatmybrain.smoketracker.data.SessionsRepository
+import com.eatmybrain.smoketracker.data.StrainsRepository
+import com.eatmybrain.smoketracker.data.BreakRepository
 import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.amountType
@@ -19,7 +21,9 @@ import kotlinx.coroutines.withContext
 
 
 class AddSessionViewModel @AssistedInject constructor(
-    private val repository: Repository,
+    private val sessionsRepository: SessionsRepository,
+    private val strainsRepository: StrainsRepository,
+    private val breakRepository: BreakRepository,
     @Assisted
     private val sessionTimestamp: Long
 ) : ViewModel() {
@@ -30,7 +34,7 @@ class AddSessionViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch {
             if (sessionTimestamp != 0L) {
-                val result = withContext(Dispatchers.IO) { repository.session(sessionTimestamp) }
+                val result = withContext(Dispatchers.IO) { sessionsRepository.session(sessionTimestamp) }
                 _session.value = result
             }
         }
@@ -46,7 +50,7 @@ class AddSessionViewModel @AssistedInject constructor(
         amountType: AmountType
     ) = viewModelScope.launch {
 
-        val strainInfo = repository.strainInfo(strainName)
+        val strainInfo = strainsRepository.strainInfo(strainName)
         val session = session.value?.apply {
             this.moodAfter = moodAfter
             this.moodBefore = moodBefore
@@ -66,16 +70,16 @@ class AddSessionViewModel @AssistedInject constructor(
             pricePerGram = pricePerGram
         )
         withContext(Dispatchers.IO) {
-            stopToleranceBreak()
-            repository.addSession(session)
+            stopBreak()
+            sessionsRepository.addSession(session)
         }
 
     }
 
-    private suspend fun stopToleranceBreak(){
-        val active = repository.isToleranceBreakActive().first()
-        if(active){
-            repository.toggleToleranceBreak()
+    private suspend fun stopBreak(){
+        //TODO display this to user
+        if(breakRepository.isBreakActive().first()){
+            breakRepository.toggleBreak()
         }
     }
     fun onSaveClicked(

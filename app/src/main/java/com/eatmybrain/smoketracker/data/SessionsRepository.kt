@@ -8,19 +8,12 @@ import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.data.structs.StrainInfo
 import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
-class Repository(
-    private val db: AppDatabase,
-    private val strainsApi: StrainsApi,
-    private val myDataStore: MyDataStore
+class SessionsRepository(
+    private val db: AppDatabase
 ) {
-    suspend fun toggleToleranceBreak(){
-        myDataStore.toggleToleranceBreak()
-    }
 
-    fun isToleranceBreakActive(): Flow<Boolean> {
-       return  myDataStore.isToleranceBreakActive()
-    }
     suspend fun addSession(session: Session) {
         if (db.sessionsDao().exists(session.timestamp)) {
             db.sessionsDao().update(session)
@@ -34,28 +27,8 @@ class Repository(
         return db.sessionsDao().byTimestamp(timestamp)
     }
 
-    suspend fun strainInfo(strainName: String): StrainInfo {
-        return searchStrainInfo(strainName) ?: StrainInfo(
-            imageUrl = "",
-            title = strainName
-        )
-    }
 
-    suspend fun searchStrainInfo(strainName: String): StrainInfo? {
-        return null
-    }
 
-    suspend fun saveSmokeData(
-        smokeFreq: Int,
-        smokeAmount: Double,
-        price: Double
-    ) {
-        myDataStore.apply {
-            savePrice(price)
-            saveSmokeAmount(smokeAmount)
-            saveSmokeFreq(smokeFreq)
-        }
-    }
 
     suspend fun sessionHistory(sessionPeriod: SessionsPeriod): List<Session> {
         val start = sessionPeriod.startTimestamp()

@@ -45,8 +45,7 @@ fun ToleranceAdviceScreen(
     ToleranceAdvice(
         onSaveClicked = { info ->
             if (!freqError && !amountError && !priceError) {
-                viewModel.saveSmokeData(info)
-                viewModel.startToleranceBreak()
+                viewModel.startBreak(info)
             }
         },
         showDialog = showDialog,

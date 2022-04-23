@@ -2,7 +2,8 @@ package com.eatmybrain.smoketracker.ui.screens.tolerance_break
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eatmybrain.smoketracker.data.Repository
+import com.eatmybrain.smoketracker.data.BreakRepository
+import com.eatmybrain.smoketracker.data.SessionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,12 +12,12 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ToleranceBreakViewModel @Inject constructor(
-    private val repository: Repository
+class BreakViewModel @Inject constructor(
+    private val breakRepository: BreakRepository
 ) : ViewModel() {
 
 
-    fun toggleToleranceBreak() = viewModelScope.launch {
-        withContext(Dispatchers.IO) { repository.toggleToleranceBreak() }
+    fun toggleBreak() = viewModelScope.launch {
+        withContext(Dispatchers.IO) { breakRepository.toggleBreak() }
     }
 }

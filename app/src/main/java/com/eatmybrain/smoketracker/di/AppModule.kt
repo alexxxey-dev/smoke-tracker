@@ -2,7 +2,9 @@ package com.eatmybrain.smoketracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.eatmybrain.smoketracker.data.Repository
+import com.eatmybrain.smoketracker.data.SessionsRepository
+import com.eatmybrain.smoketracker.data.StrainsRepository
+import com.eatmybrain.smoketracker.data.BreakRepository
 import com.eatmybrain.smoketracker.data.api.StrainsApi
 import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import com.eatmybrain.smoketracker.data.db.AppDatabase
@@ -51,6 +53,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(db: AppDatabase, strainsApi: StrainsApi, myDataStore: MyDataStore) =
-        Repository(db, strainsApi, myDataStore)
+    fun provideSessionsRepository(db: AppDatabase) = SessionsRepository(db)
+
+
+    @Provides
+    @Singleton
+    fun provideBreakRepository(dataStore: MyDataStore) = BreakRepository(dataStore)
+
+
+    @Provides
+    @Singleton
+    fun provideStrainsRepository(api: StrainsApi) = StrainsRepository(api)
 }
