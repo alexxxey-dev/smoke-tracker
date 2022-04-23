@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.data.structs.SessionsInfo
 import com.eatmybrain.smoketracker.ui.StyledButton
-import com.eatmybrain.smoketracker.ui.screens.tolerance.enums.DialogError
 import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.countCommas
 import com.eatmybrain.smoketracker.util.removeCommas
@@ -41,49 +40,55 @@ fun ToleranceScreen(
     navigateToResetTolerance: () -> Unit
 ) {
     val showDialog = remember { mutableStateOf(false) }
-    val dialogError = remember { mutableStateOf<DialogError?>(null) }
-
-
+    var freqError by remember { mutableStateOf(false) }
+    var amountError by remember { mutableStateOf(false) }
+    var priceError by remember { mutableStateOf(false) }
     Tolerance(
         onSaveClicked = { info ->
-            if (dialogError.value == null) {
+            if (!freqError && !amountError && !priceError) {
                 viewModel.saveSmokeData(info)
                 viewModel.startToleranceBreak()
                 navigateToResetTolerance()
             }
         },
-        dialogError = dialogError,
         showDialog = showDialog,
         checkFreqError = {
-            dialogError.value = if (viewModel.checkFreqError(it))  DialogError.SMOKE_FREQ else  null
+            freqError= viewModel.checkFreqError(it)
         },
         checkAmountError = {
-            dialogError.value = if (viewModel.checkAmountError(it))  DialogError.SMOKE_AMOUNT else  null
+            amountError = viewModel.checkAmountError(it)
         },
         checkPriceError = {
-            dialogError.value = if  (viewModel.checkPriceError(it))  DialogError.PRICE else  null
-        }
+            priceError= viewModel.checkPriceError(it)
+        },
+        freqError = freqError,
+        amountError = amountError,
+        priceError = priceError
     )
 }
 
 @Composable
 private fun Tolerance(
     onSaveClicked: (SessionsInfo) -> Unit,
-    dialogError: MutableState<DialogError?>,
     showDialog: MutableState<Boolean>,
     checkFreqError: (String) -> Unit,
     checkAmountError: (String) -> Unit,
-    checkPriceError: (String) -> Unit
+    checkPriceError: (String) -> Unit,
+    freqError: Boolean,
+    amountError: Boolean,
+    priceError: Boolean
 ) {
     SessionsInfoDialog(
         onSaveClicked = { info ->
             onSaveClicked(info)
         },
         showDialog = showDialog,
-        dialogError = dialogError,
         checkFreqError = checkFreqError,
         checkAmountError = checkAmountError,
-        checkPriceError = checkPriceError
+        checkPriceError = checkPriceError,
+        freqError = freqError,
+        amountError = amountError,
+        priceError = priceError
     )
 
     ToleranceScreenContent(showDialog)
@@ -93,10 +98,12 @@ private fun Tolerance(
 private fun SessionsInfoDialog(
     onSaveClicked: (SessionsInfo) -> Unit,
     showDialog: MutableState<Boolean>,
-    dialogError: MutableState<DialogError?>,
     checkFreqError: (String) -> Unit,
     checkAmountError: (String) -> Unit,
-    checkPriceError: (String) -> Unit
+    checkPriceError: (String) -> Unit,
+    freqError: Boolean,
+    amountError: Boolean,
+    priceError: Boolean
 ) {
     var smokeFreq by remember { mutableStateOf("") }
     var smokeAmount by remember { mutableStateOf("") }
@@ -127,7 +134,9 @@ private fun SessionsInfoDialog(
                     price = it
                     checkPriceError(it)
                 },
-                dialogError = dialogError
+                freqError = freqError,
+                amountError = amountError,
+                priceError = priceError
             )
         }
 
@@ -138,7 +147,9 @@ private fun SessionsInfoDialog(
 @Composable
 private fun SessionsInfoDialogUI(
     onSaveClicked: () -> Unit,
-    dialogError: MutableState<DialogError?>,
+    freqError: Boolean,
+    amountError: Boolean,
+    priceError: Boolean,
     smokeFreq: String,
     smokeAmount: String,
     price: String,
@@ -169,7 +180,7 @@ private fun SessionsInfoDialogUI(
                 allowCommas = false,
                 maxChars = 2,
                 imeAction = ImeAction.Next,
-                isTextError = dialogError.value == DialogError.SMOKE_FREQ
+                isTextError = freqError
             )
 
             Text(
@@ -187,7 +198,7 @@ private fun SessionsInfoDialogUI(
                 allowCommas = true,
                 maxChars = 2,
                 imeAction = ImeAction.Next,
-                isTextError = dialogError.value == DialogError.SMOKE_AMOUNT
+                isTextError = amountError
             )
             Text(
                 text = stringResource(R.string.average_price),
@@ -204,7 +215,7 @@ private fun SessionsInfoDialogUI(
                 allowCommas = true,
                 maxChars = 3,
                 imeAction = ImeAction.Done,
-                isTextError = dialogError.value == DialogError.PRICE
+                isTextError = priceError
             )
 
             StyledButton(

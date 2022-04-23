@@ -25,13 +25,7 @@ fun String.countCommas(): Int {
     return counter
 }
 
-fun String.double() :Double{
-    return if(this.last() == ',' || this.last() == '.'){
-        this.dropLast(1).toDouble()
-    } else{
-        this.toDouble()
-    }
-}
+fun String.double() = this.replace(",", ".").toDouble()
 
 fun Double.formatZero(): String? {
     val format =  DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).apply {

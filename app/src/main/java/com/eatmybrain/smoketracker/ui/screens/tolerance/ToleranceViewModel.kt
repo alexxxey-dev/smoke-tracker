@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.data.Repository
 import com.eatmybrain.smoketracker.data.structs.SessionsInfo
-import com.eatmybrain.smoketracker.ui.screens.tolerance.enums.DialogError
 import com.eatmybrain.smoketracker.util.double
 import com.eatmybrain.smoketracker.util.removeCommas
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,7 +34,7 @@ class ToleranceViewModel @Inject constructor(
         smokeAmount:String
     ) :Boolean{
         return try {
-            smokeAmount.removeCommas().isBlank() || smokeAmount.toDouble() == 0.0 || !smokeAmount.removeCommas().isDigitsOnly()
+            smokeAmount.removeCommas().isBlank() || smokeAmount.double() == 0.0 || !smokeAmount.removeCommas().isDigitsOnly()
         }catch (ex:NumberFormatException){
             true
         }
@@ -45,7 +44,7 @@ class ToleranceViewModel @Inject constructor(
         price:String
     ) :Boolean{
         return try{
-            price.removeCommas().isBlank() || price.toDouble() == 0.0 || !price.removeCommas().isDigitsOnly()
+            price.removeCommas().isBlank() || price.double() == 0.0 || !price.removeCommas().isDigitsOnly()
         } catch (ex:NumberFormatException){
             true
         }

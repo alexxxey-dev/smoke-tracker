@@ -49,7 +49,7 @@
     <string name="reset_tolerance">Take a break</string>
     
     <string name="how_often_smoke">How often do you smoke?</string>
-    <string name="how_much_smoke">How much do you smoke?</string>
+    <string name="how_much_smoke">How much do you smoke? (per session)</string>
     <string name="average_price">Average price per gram</string>
 
     <string name="times_a_week">times a week</string>

@@ -3,6 +3,7 @@ package com.eatmybrain.smoketracker.data.data_store
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.eatmybrain.smoketracker.util.Constants
@@ -11,6 +12,8 @@ import kotlinx.coroutines.flow.map
 
 class MyDataStore(private val context:Context) {
     private val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = Constants.DATA_STORE_NAME)
+
+    private val TOLERANCE_BREAK_ACTIVE = booleanPreferencesKey("TOLERANCE_BREAK_ACTIVE")
 
     suspend fun saveSmokeFreq(smokeFreq:Int) {
         context.dataStore.edit {settings->
