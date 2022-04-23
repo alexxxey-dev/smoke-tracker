@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eatmybrain.smoketracker.ui.activity.MainActivity
 import com.eatmybrain.smoketracker.R
-import com.eatmybrain.smoketracker.ui.StyledButton
+import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme

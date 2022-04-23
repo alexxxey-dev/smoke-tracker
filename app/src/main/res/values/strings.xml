@@ -56,4 +56,8 @@
     <string name="grams">grams</string>
     <string name="dollars">dollar(s)</string>
     <string name="stop">Stop</string>
+
+    <string name="days">days</string>
+    <string name="hours">hours</string>
+    <string name="minutes">minutes</string>
 </resources>

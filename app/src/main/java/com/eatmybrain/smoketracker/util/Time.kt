@@ -2,15 +2,30 @@ package com.eatmybrain.smoketracker.util
 
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
 import java.util.*
 
 @SuppressLint("ConstantLocale")
 object Time {
     private val dayMonthYear = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
     private val cal = Calendar.getInstance()
+
+    fun millisToDays(millis:Long) : Long{
+        val seconds: Long = millis / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        return hours / 24
+    }
+
+    fun millisToHours(millis: Long) :Long{
+        val seconds: Long = millis / 1000
+        val minutes = seconds / 60
+        return (minutes / 60)
+    }
+
+    fun millisToMinutes(millis:Long):Long{
+        val seconds: Long = millis / 1000
+        return  (seconds / 60)
+    }
 
     fun dayMonthYear(timestamp:Long) :String{
 

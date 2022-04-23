@@ -29,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.data.structs.SessionsInfo
-import com.eatmybrain.smoketracker.ui.StyledButton
+import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.countCommas
 import com.eatmybrain.smoketracker.util.removeCommas
