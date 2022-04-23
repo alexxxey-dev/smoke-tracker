@@ -13,6 +13,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,6 +25,7 @@ class AddSessionViewModel @AssistedInject constructor(
 ) : ViewModel() {
     private val _session = MutableLiveData<Session>()
     val session: LiveData<Session> = _session
+
 
     init {
         viewModelScope.launch {
@@ -64,12 +66,18 @@ class AddSessionViewModel @AssistedInject constructor(
             pricePerGram = pricePerGram
         )
         withContext(Dispatchers.IO) {
+            stopToleranceBreak()
             repository.addSession(session)
         }
 
     }
 
-
+    private suspend fun stopToleranceBreak(){
+        val active = repository.isToleranceBreakActive().first()
+        if(active){
+            repository.toggleToleranceBreak()
+        }
+    }
     fun onSaveClicked(
         strainName: String,
         pricePerGram: String,
