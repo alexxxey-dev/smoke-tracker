@@ -12,6 +12,30 @@ import kotlinx.coroutines.flow.map
 class MyDataStore(private val context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.DATA_STORE_NAME)
 
+    suspend fun saveGramsPerSession(value:Double) {
+        context.dataStore.edit {
+            it[BreakScheme.GRAMS_PER_SESSION] = value
+        }
+    }
+
+     fun getGramsPerSession():Flow<Double>{
+        return context.dataStore.data.map {
+            it[BreakScheme.GRAMS_PER_SESSION] ?: 0.0
+        }
+    }
+
+    suspend fun saveSessionsPerWeek(value:Int){
+        context.dataStore.edit {
+            it[BreakScheme.SESSIONS_PER_WEEK] = value
+        }
+    }
+
+    fun getSessionsPerWeek():Flow<Int>{
+        return context.dataStore.data.map {
+            it[BreakScheme.SESSIONS_PER_WEEK] ?: 0
+        }
+    }
+
     fun getBreakStart():Flow<Long>{
         return context.dataStore.data.map {
             it[BreakScheme.START_TIMESTAMP] ?: 0L

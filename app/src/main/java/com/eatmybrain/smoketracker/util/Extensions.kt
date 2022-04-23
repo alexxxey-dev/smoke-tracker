@@ -27,7 +27,7 @@ fun String.countCommas(): Int {
 
 fun String.double() = this.replace(",", ".").toDouble()
 
-fun Double.formatZero(): String? {
+fun Double.formatZero(): String {
     val format =  DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).apply {
         maximumFractionDigits = 5
     }

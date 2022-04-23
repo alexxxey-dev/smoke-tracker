@@ -15,6 +15,13 @@ class BreakRepository(
     fun isBreakActive(): Flow<Boolean> {
         return  myDataStore.isBreakActive()
     }
+    suspend fun saveSessionsPerWeek(value:Int) = myDataStore.saveSessionsPerWeek(value)
+
+    suspend fun getSessionsPerWeek():Int = myDataStore.getSessionsPerWeek().first()
+
+    suspend fun saveGramsPerSession(value:Double) = myDataStore.saveGramsPerSession(value)
+
+    suspend fun getGramsPerSession():Double = myDataStore.getGramsPerSession().first()
 
     suspend fun saveGramPrice(price:Double) = myDataStore.saveGramPrice(price)
 

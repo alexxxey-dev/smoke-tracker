@@ -60,4 +60,9 @@
     <string name="days">days</string>
     <string name="hours">hours</string>
     <string name="minutes">minutes</string>
+
+    <string name="money_saved">Money\nsaved</string>
+    <string name="weed_free_time">Weed free\ntime</string>
+    <string name="grams_not_smoked">Grams not\nsmoked</string>
+    <string name="achievements">Achievements</string>
 </resources>

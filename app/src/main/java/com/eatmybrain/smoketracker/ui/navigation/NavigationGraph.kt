@@ -34,7 +34,11 @@ fun NavigationGraph(navController: NavHostController, breakActive:Boolean) {
 
         composable(BottomNavItem.Tolerance.screenRoute) {
             if(breakActive){
-                BreakScreen()
+                BreakScreen(
+                    navigateToAchievements = {
+                        //TODO
+                    }
+                )
             } else{
                 ToleranceAdviceScreen()
             }
