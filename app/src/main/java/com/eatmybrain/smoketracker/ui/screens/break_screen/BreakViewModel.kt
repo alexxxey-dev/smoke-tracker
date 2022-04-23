@@ -1,9 +1,8 @@
-package com.eatmybrain.smoketracker.ui.screens.tolerance_break
+package com.eatmybrain.smoketracker.ui.screens.break_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eatmybrain.smoketracker.data.BreakRepository
-import com.eatmybrain.smoketracker.data.SessionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

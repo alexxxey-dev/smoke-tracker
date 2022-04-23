@@ -24,6 +24,17 @@ class MyDataStore(private val context: Context) {
         }
     }
 
+    suspend fun saveGramPrice(gramPrice:Double){
+        context.dataStore.edit {
+            it[BreakScheme.GRAM_PRICE] = gramPrice
+        }
+    }
+
+    fun getGramPrice():Flow<Double>{
+        return context.dataStore.data.map {
+            it[BreakScheme.GRAM_PRICE] ?: 0.0
+        }
+    }
     fun getBreakDuration(): Flow<Long> {
         return context.dataStore.data.map {
             it[BreakScheme.DURATION] ?: 0L

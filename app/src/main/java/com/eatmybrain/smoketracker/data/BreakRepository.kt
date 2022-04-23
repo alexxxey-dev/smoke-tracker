@@ -16,6 +16,10 @@ class BreakRepository(
         return  myDataStore.isBreakActive()
     }
 
+    suspend fun saveGramPrice(price:Double) = myDataStore.saveGramPrice(price)
+
+    suspend fun getGramPrice() = myDataStore.getGramPrice().first()
+
     suspend fun getBreakDuration() = myDataStore.getBreakDuration().first()
 
     suspend fun getBreakStart() = myDataStore.getBreakStart().first()

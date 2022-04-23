@@ -11,7 +11,7 @@ import com.eatmybrain.smoketracker.ui.screens.premium.PremiumScreen
 import com.eatmybrain.smoketracker.ui.screens.statistics.StatisticsScreen
 import com.eatmybrain.smoketracker.ui.screens.strain_search.StrainSearchScreen
 import com.eatmybrain.smoketracker.ui.screens.tolerance_advice.ToleranceAdviceScreen
-import com.eatmybrain.smoketracker.ui.screens.tolerance_break.BreakScreen
+import com.eatmybrain.smoketracker.ui.screens.break_screen.BreakScreen
 import com.eatmybrain.smoketracker.util.Constants
 
 @Composable

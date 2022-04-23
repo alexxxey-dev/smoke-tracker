@@ -54,10 +54,14 @@ class ToleranceAdviceViewModel @Inject constructor(
     fun startBreak(sessionsInfo: SessionsInfo) = viewModelScope.launch{
         val duration = BreakTimeCalculator.calculate(sessionsInfo)
         val start = System.currentTimeMillis()
+        val price = sessionsInfo.price.double()
         withContext(Dispatchers.IO){
-            repository.toggleBreak()
-            repository.saveBreakDuration(duration)
-            repository.saveBreakStart(start)
+            repository.apply {
+                saveGramPrice(price)
+                saveBreakDuration(duration)
+                saveBreakStart(start)
+                toggleBreak()
+            }
         }
     }
 }

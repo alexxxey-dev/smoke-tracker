@@ -1,4 +1,4 @@
-package com.eatmybrain.smoketracker.ui.screens.tolerance_break
+package com.eatmybrain.smoketracker.ui.screens.break_screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
