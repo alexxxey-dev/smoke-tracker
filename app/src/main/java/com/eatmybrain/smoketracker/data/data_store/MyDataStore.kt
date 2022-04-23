@@ -15,6 +15,17 @@ class MyDataStore(private val context:Context) {
 
     private val TOLERANCE_BREAK_ACTIVE = booleanPreferencesKey("TOLERANCE_BREAK_ACTIVE")
 
+    suspend fun toggleToleranceBreak(){
+        context.dataStore.edit { settings->
+            settings[TOLERANCE_BREAK_ACTIVE] = !(settings[TOLERANCE_BREAK_ACTIVE] ?: false)
+        }
+    }
+
+    fun isToleranceBreakActive():Flow<Boolean>{
+        return context.dataStore.data.map { prefs->
+            prefs[TOLERANCE_BREAK_ACTIVE] ?: false
+        }
+    }
     suspend fun saveSmokeFreq(smokeFreq:Int) {
         context.dataStore.edit {settings->
             settings[SessionsInfoScheme.SMOKE_FREQ] = smokeFreq

@@ -1,10 +1,13 @@
-package com.eatmybrain.smoketracker
+package com.eatmybrain.smoketracker.ui.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import com.eatmybrain.smoketracker.ui.navigation.BottomNav
 import com.eatmybrain.smoketracker.ui.navigation.BottomNavItem
@@ -19,6 +22,10 @@ import dagger.hilt.android.components.ActivityComponent
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainActivityViewModel by viewModels()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,24 +39,30 @@ class MainActivity : ComponentActivity() {
     @EntryPoint
     @InstallIn(ActivityComponent::class)
     interface ViewModelFactoryProvider {
-        fun addSessionViewModelFactory() : AddSessionViewModel.Factory
+        fun addSessionViewModelFactory(): AddSessionViewModel.Factory
     }
+
     @Composable
     fun AppScreen() {
+        val toleranceBreakActive by viewModel.isToleranceBreakActive.collectAsState(initial = false)
         val navController = rememberNavController()
         val currentRoute = currentRoute(navController)
+
         Scaffold(bottomBar = {
-            if (currentRoute == BottomNavItem.Statistics.screenRoute
-                || currentRoute == BottomNavItem.StrainSearch.screenRoute
-                || currentRoute == BottomNavItem.Tolerance.screenRoute
-                || currentRoute == BottomNavItem.Premium.screenRoute) {
-                BottomNav(navController = navController)
-            }
+            if (showBottomNav(currentRoute)) BottomNav(navController)
         }) {
-            NavigationGraph(navController = navController)
+            NavigationGraph(
+                navController = navController,
+                toleranceBreakActive = toleranceBreakActive
+            )
         }
     }
 
+    private fun showBottomNav(currentRoute: String?): Boolean =
+        (currentRoute == BottomNavItem.Statistics.screenRoute
+                || currentRoute == BottomNavItem.StrainSearch.screenRoute
+                || currentRoute == BottomNavItem.Tolerance.screenRoute
+                || currentRoute == BottomNavItem.Premium.screenRoute)
 
 }
 

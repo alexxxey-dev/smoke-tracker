@@ -7,12 +7,20 @@ import com.eatmybrain.smoketracker.data.db.AppDatabase
 import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.data.structs.StrainInfo
 import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
+import kotlinx.coroutines.flow.Flow
 
 class Repository(
     private val db: AppDatabase,
     private val strainsApi: StrainsApi,
     private val myDataStore: MyDataStore
 ) {
+    suspend fun toggleToleranceBreak(){
+        myDataStore.toggleToleranceBreak()
+    }
+
+    fun isToleranceBreakActive(): Flow<Boolean> {
+       return  myDataStore.isToleranceBreakActive()
+    }
     suspend fun addSession(session: Session) {
         if (db.sessionsDao().exists(session.timestamp)) {
             db.sessionsDao().update(session)

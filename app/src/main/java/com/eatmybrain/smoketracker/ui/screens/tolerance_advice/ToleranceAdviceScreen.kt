@@ -1,4 +1,4 @@
-package com.eatmybrain.smoketracker.ui.screens.tolerance
+package com.eatmybrain.smoketracker.ui.screens.tolerance_advice
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -35,20 +35,18 @@ import com.eatmybrain.smoketracker.util.countCommas
 import com.eatmybrain.smoketracker.util.removeCommas
 
 @Composable
-fun ToleranceScreen(
-    viewModel: ToleranceViewModel = hiltViewModel(),
-    navigateToResetTolerance: () -> Unit
+fun ToleranceAdviceScreen(
+    viewModel: ToleranceAdviceViewModel = hiltViewModel()
 ) {
     val showDialog = remember { mutableStateOf(false) }
     var freqError by remember { mutableStateOf(false) }
     var amountError by remember { mutableStateOf(false) }
     var priceError by remember { mutableStateOf(false) }
-    Tolerance(
+    ToleranceAdvice(
         onSaveClicked = { info ->
             if (!freqError && !amountError && !priceError) {
                 viewModel.saveSmokeData(info)
                 viewModel.startToleranceBreak()
-                navigateToResetTolerance()
             }
         },
         showDialog = showDialog,
@@ -68,7 +66,7 @@ fun ToleranceScreen(
 }
 
 @Composable
-private fun Tolerance(
+private fun ToleranceAdvice(
     onSaveClicked: (SessionsInfo) -> Unit,
     showDialog: MutableState<Boolean>,
     checkFreqError: (String) -> Unit,

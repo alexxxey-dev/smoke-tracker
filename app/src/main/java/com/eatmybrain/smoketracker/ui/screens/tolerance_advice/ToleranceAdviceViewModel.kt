@@ -1,9 +1,8 @@
-package com.eatmybrain.smoketracker.ui.screens.tolerance
+package com.eatmybrain.smoketracker.ui.screens.tolerance_advice
 
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.data.Repository
 import com.eatmybrain.smoketracker.data.structs.SessionsInfo
 import com.eatmybrain.smoketracker.util.double
@@ -16,7 +15,7 @@ import java.lang.NumberFormatException
 import javax.inject.Inject
 
 @HiltViewModel
-class ToleranceViewModel @Inject constructor(
+class ToleranceAdviceViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
@@ -66,7 +65,7 @@ class ToleranceViewModel @Inject constructor(
         }
     }
 
-    fun startToleranceBreak(){
-        //TODO
+    fun startToleranceBreak() = viewModelScope.launch{
+        withContext(Dispatchers.IO) { repository.toggleToleranceBreak() }
     }
 }

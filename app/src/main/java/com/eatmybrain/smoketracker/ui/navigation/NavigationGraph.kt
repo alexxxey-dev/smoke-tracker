@@ -8,14 +8,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.eatmybrain.smoketracker.ui.screens.add_session.AddSessionScreen
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumScreen
-import com.eatmybrain.smoketracker.ui.screens.reset_tolerance.ResetToleranceScreen
 import com.eatmybrain.smoketracker.ui.screens.statistics.StatisticsScreen
 import com.eatmybrain.smoketracker.ui.screens.strain_search.StrainSearchScreen
-import com.eatmybrain.smoketracker.ui.screens.tolerance.ToleranceScreen
+import com.eatmybrain.smoketracker.ui.screens.tolerance_advice.ToleranceAdviceScreen
+import com.eatmybrain.smoketracker.ui.screens.tolerance_break.ToleranceBreakScreen
 import com.eatmybrain.smoketracker.util.Constants
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(navController: NavHostController, toleranceBreakActive:Boolean) {
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Statistics.screenRoute
@@ -30,16 +30,15 @@ fun NavigationGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(AppScreens.ResetTolerance.screenRoute){
-            ResetToleranceScreen()
-        }
+
 
         composable(BottomNavItem.Tolerance.screenRoute) {
-            ToleranceScreen(
-                navigateToResetTolerance = {
-                    navController.navigate(AppScreens.ResetTolerance.screenRoute)
-                }
-            )
+            if(toleranceBreakActive){
+                ToleranceBreakScreen()
+            } else{
+                ToleranceAdviceScreen()
+            }
+
         }
 
         composable(BottomNavItem.StrainSearch.screenRoute) {

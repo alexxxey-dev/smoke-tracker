@@ -48,7 +48,7 @@ fun BottomNav(navController: NavController) {
                 selected = currentRoute == item.screenRoute,
                 onClick = {
                     navController.navigate(item.screenRoute) {
-                        popUpTo(navController.graph.findStartDestination().id){
+                        popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
                         launchSingleTop = true
@@ -59,3 +59,4 @@ fun BottomNav(navController: NavController) {
         }
     }
 }
+

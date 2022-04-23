@@ -17,7 +17,7 @@ import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StyledButton(text: String, onClick: () -> Unit, icon: Painter, modifier: Modifier = Modifier) {
+fun StyledButton(text: String, onClick: () -> Unit, icon: Painter? = null, modifier: Modifier = Modifier) {
     Card(
         onClick = onClick,
         modifier = modifier,
@@ -28,14 +28,18 @@ fun StyledButton(text: String, onClick: () -> Unit, icon: Painter, modifier: Mod
                 text = text,
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.onSurface,
-                modifier = Modifier.padding(end = 12.dp, start = 16.dp)
+                modifier = Modifier.padding(end = if(icon!=null) 12.dp else 16.dp, start = 16.dp),
+                textAlign = TextAlign.Center
             )
-            Icon(
-                painter = icon,
-                contentDescription = "Button icon",
-                tint = MaterialTheme.colors.primary,
-                modifier = Modifier.padding(end = 16.dp)
-            )
+            if(icon!=null){
+                Icon(
+                    painter = icon,
+                    contentDescription = "Button icon",
+                    tint = MaterialTheme.colors.primary,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+            }
+
         }
     }
 }
@@ -44,15 +48,28 @@ fun StyledButton(text: String, onClick: () -> Unit, icon: Painter, modifier: Mod
 private fun StyledButtonPreview(){
     SmokeTrackerTheme {
         Scaffold {
-            StyledButton(
-                text = stringResource(R.string.save),
-                onClick = {  },
-                icon = painterResource(R.drawable.ic_save),
-                modifier = Modifier
-                    .padding(top = 16.dp, end = 16.dp, bottom = 20.dp)
-                    .height(40.dp)
+            Column{
+                StyledButton(
+                    text = stringResource(R.string.save),
+                    onClick = {  },
+                    icon = painterResource(R.drawable.ic_save),
+                    modifier = Modifier
+                        .padding(top = 16.dp, end = 16.dp, bottom = 20.dp)
+                        .height(40.dp)
 
-            )
+                )
+
+                StyledButton(
+                    text = stringResource(R.string.save),
+                    onClick = {  },
+                    icon = null,
+                    modifier = Modifier
+                        .padding(top = 16.dp, end = 16.dp, bottom = 20.dp)
+                        .height(45.dp)
+
+                )
+            }
+
         }
     }
 

@@ -55,4 +55,5 @@
     <string name="times_a_week">times a week</string>
     <string name="grams">grams</string>
     <string name="dollars">dollar(s)</string>
+    <string name="stop">Stop</string>
 </resources>
