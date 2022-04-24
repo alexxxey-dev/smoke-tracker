@@ -38,7 +38,8 @@ object BreakCalculator {
         val passedTime = System.currentTimeMillis() - breakStart
         val days = TimeUnit.MILLISECONDS.toDays(passedTime)
         val hours = TimeUnit.MILLISECONDS.toHours(passedTime)
-        return  if(days>0) "$days days" else "$hours hours"
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(passedTime)
+        return  if(days>0) "$days day(s)" else if(hours>0) "$hours hour(s)" else "$minutes minute(s)"
     }
 
     fun gramsAvoided(
