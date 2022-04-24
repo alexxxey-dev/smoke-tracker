@@ -79,12 +79,12 @@ class BreakViewModel @Inject constructor(
         val moneySaved = BreakCalculator
             .moneySaved(sessionsPerWeek, pricePerGram, gramsPerSession, startTime)
             .formatZero()
-        _moneySaved.value = "${moneySaved}$"
+        _moneySaved.value = "$moneySaved $"
 
         val gramsAvoided = BreakCalculator
             .gramsAvoided(sessionsPerWeek, gramsPerSession, startTime)
             .formatZero()
-        _gramsAvoided.value = "${gramsAvoided}g"
+        _gramsAvoided.value = "$gramsAvoided g"
 
         _weedFreeTime.value = BreakCalculator.passedBreakTime(startTime)
     }

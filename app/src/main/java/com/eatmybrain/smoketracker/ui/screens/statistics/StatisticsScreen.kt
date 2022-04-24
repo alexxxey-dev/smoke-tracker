@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.data.structs.Session
+import com.eatmybrain.smoketracker.ui.components.Loading
 import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
 import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.Time
@@ -67,6 +68,8 @@ fun StatisticsScreen(
             sessionList = sessionList!!,
             onSessionClicked = onSessionClicked
         )
+    } else{
+        Loading()
     }
 }
 

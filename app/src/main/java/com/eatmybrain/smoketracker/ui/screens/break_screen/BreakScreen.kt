@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
+import com.eatmybrain.smoketracker.ui.components.Loading
 import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.Time
@@ -36,23 +37,28 @@ fun BreakScreen(
     val gramsAvoided by viewModel.gramsAvoided.observeAsState()
     val moneySaved by viewModel.moneySaved.observeAsState()
     val weedFreeTime by viewModel.weedFreeTime.observeAsState()
-    if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) return
+    if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
+        Loading()
+    } else{
+        BreakScreenContent(
+            stopBreak = {
+                viewModel.toggleBreak()
+                navigateToAdvice()
+            },
+            modifier = Modifier.fillMaxSize(),
+            totalTime = totalTime!!,
+            leftTime = leftTime!!,
+            gramsAvoided = gramsAvoided!!,
+            moneySaved = moneySaved!!,
+            weedFreeTime = weedFreeTime!!,
+            navigateToAchievements = navigateToAchievements
+        )
+    }
 
 
-    BreakScreenContent(
-        stopBreak = {
-            viewModel.toggleBreak()
-            navigateToAdvice()
-        },
-        modifier = Modifier.fillMaxSize(),
-        totalTime = totalTime!!,
-        leftTime = leftTime!!,
-        gramsAvoided = gramsAvoided!!,
-        moneySaved = moneySaved!!,
-        weedFreeTime = weedFreeTime!!,
-        navigateToAchievements = navigateToAchievements
-    )
+
 }
+
 
 @Composable
 fun BreakScreenContent(
