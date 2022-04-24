@@ -1,5 +1,6 @@
 package com.eatmybrain.smoketracker.ui.components
 
+import android.view.textservice.TextInfo
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -19,24 +20,9 @@ import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.Time
 
 
-@Composable
-fun CircleProgressBar(
-    timeLeft: Long,
-    percentage: Float,
-    radius: Dp = 120.dp,
-    strokeWidth: Dp = 18.dp
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(radius * 2f)
-    ) {
-        ProgressBar(radius = radius, strokeWidth = strokeWidth, percentage = percentage)
-        TextInfo(timeLeft)
-    }
-}
 
 @Composable
-private fun ProgressBar(radius: Dp, strokeWidth: Dp, percentage: Float) {
+ fun CircleProgressBar(radius: Dp, strokeWidth: Dp, percentage: Float) {
     val grey = MaterialTheme.colors.secondaryVariant
     val primary = MaterialTheme.colors.primary
     val primaryVariant = MaterialTheme.colors.primaryVariant
@@ -63,46 +49,3 @@ private fun ProgressBar(radius: Dp, strokeWidth: Dp, percentage: Float) {
     }
 }
 
-@Composable
-private fun TextInfo(timeLeft: Long) {
-    val minutes = Time.millisToMinutes(timeLeft) % 60
-    val hours = Time.millisToHours(timeLeft) % 24
-    val days = Time.millisToDays(timeLeft)
-
-    Row {
-        TextInfoItem(
-            title = days.toString(),
-            subtitle = stringResource(R.string.days),
-            modifier = Modifier.padding(end = 20.dp)
-        )
-
-        TextInfoItem(
-            title = hours.toString(),
-            subtitle = stringResource(R.string.hours),
-            modifier = Modifier.padding(end = 20.dp)
-        )
-
-        TextInfoItem(
-            title = minutes.toString(),
-            subtitle = stringResource(R.string.minutes)
-        )
-    }
-}
-
-@Composable
-private fun TextInfoItem(title: String, subtitle: String, modifier: Modifier = Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.h2,
-            color = MaterialTheme.colors.primary
-        )
-
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onBackground
-        )
-    }
-
-}

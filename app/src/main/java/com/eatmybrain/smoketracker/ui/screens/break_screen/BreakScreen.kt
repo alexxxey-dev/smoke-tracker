@@ -10,15 +10,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
 import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.util.Constants
+import com.eatmybrain.smoketracker.util.Time
 
 
 @Composable
@@ -41,14 +44,7 @@ fun BreakScreen(
             viewModel.toggleBreak()
             navigateToAdvice()
         },
-        modifier = Modifier
-            .padding(
-                start = 12.dp,
-                end = 12.dp,
-                bottom = Constants.BOTTOM_NAV_HEIGHT + 16.dp,
-                top = 30.dp
-            )
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         totalTime = totalTime!!,
         leftTime = leftTime!!,
         gramsAvoided = gramsAvoided!!,
@@ -69,6 +65,8 @@ fun BreakScreenContent(
     weedFreeTime: String,
     navigateToAchievements: () -> Unit
 ) {
+
+    val statsCardCount = 3
     Column(
         modifier = modifier
     ) {
@@ -76,8 +74,10 @@ fun BreakScreenContent(
             totalTime = totalTime,
             leftTime = leftTime,
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .size(240.dp)
+                .padding(top = 30.dp)
+                .align(Alignment.CenterHorizontally),
+            radius = 120.dp,
+            strokeWidth = 18.dp
         )
 
         Row(
@@ -90,18 +90,27 @@ fun BreakScreenContent(
             StatsCard(
                 title = stringResource(R.string.money_saved),
                 subtitle = moneySaved,
-                modifier = Modifier.padding(end = 20.dp)
+                cardsCount = statsCardCount
             )
             StatsCard(
                 title = stringResource(R.string.weed_free_time),
                 subtitle = weedFreeTime,
-                modifier = Modifier.padding(end = 20.dp)
+                cardsCount = statsCardCount
             )
-            StatsCard(title = stringResource(R.string.grams_not_smoked), subtitle = gramsAvoided)
+            StatsCard(title = stringResource(R.string.grams_not_smoked), subtitle = gramsAvoided, cardsCount = statsCardCount)
         }
 
 
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = Constants.BOTTOM_NAV_HEIGHT + 16.dp
+                )
+        ) {
             StyledButton(
                 text = stringResource(R.string.stop),
                 onClick = stopBreak,
@@ -125,9 +134,14 @@ fun BreakScreenContent(
 }
 
 @Composable
-fun StatsCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
+fun StatsCard(title: String, subtitle: String, cardsCount: Int) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val cardWidth = (screenWidth - (10.dp * cardsCount)) / 3
+    val cardHeight = cardWidth.times(1.1f)
     Card(
-        modifier = modifier.size(width = 100.dp, height = 110.dp),
+        modifier = Modifier
+            .size(width = cardWidth, height = cardHeight)
+            .padding(start = 5.dp, end = 5.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = 2.dp
     ) {
@@ -155,12 +169,59 @@ fun StatsCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BreakProgress(totalTime: Long, leftTime: Long, modifier: Modifier = Modifier) {
+fun BreakProgress(totalTime: Long, leftTime: Long, modifier: Modifier = Modifier, radius:Dp, strokeWidth:Dp) {
     val percentage = leftTime.div(totalTime.toFloat())
-    Box(modifier = modifier) {
-        CircleProgressBar(
-            timeLeft = leftTime,
-            percentage = percentage
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.size(radius * 2f)
+    ) {
+        CircleProgressBar(radius = radius, strokeWidth = strokeWidth, percentage = percentage)
+        TimeText(leftTime)
+    }
+}
+
+
+
+@Composable
+private fun TimeText(timeLeft: Long) {
+    val minutes = Time.millisToMinutes(timeLeft) % 60
+    val hours = Time.millisToHours(timeLeft) % 24
+    val days = Time.millisToDays(timeLeft)
+
+    Row {
+        TimeTextItem(
+            title = days.toString(),
+            subtitle = stringResource(R.string.days),
+            modifier = Modifier.padding(end = 20.dp)
+        )
+
+        TimeTextItem(
+            title = hours.toString(),
+            subtitle = stringResource(R.string.hours),
+            modifier = Modifier.padding(end = 20.dp)
+        )
+
+        TimeTextItem(
+            title = minutes.toString(),
+            subtitle = stringResource(R.string.minutes)
         )
     }
+}
+
+@Composable
+private fun TimeTextItem(title: String, subtitle: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h2,
+            color = MaterialTheme.colors.primary
+        )
+
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.body2,
+            color = MaterialTheme.colors.onBackground
+        )
+    }
+
 }
