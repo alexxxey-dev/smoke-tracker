@@ -22,7 +22,11 @@ import com.eatmybrain.smoketracker.util.Constants
 
 
 @Composable
-fun BreakScreen(viewModel: BreakViewModel = hiltViewModel(), navigateToAchievements: () -> Unit) {
+fun BreakScreen(
+    viewModel: BreakViewModel = hiltViewModel(),
+    navigateToAchievements: () -> Unit,
+    navigateToAdvice: () -> Unit
+) {
     val totalTime by viewModel.totalTime.observeAsState()
     val leftTime by viewModel.leftTime.observeAsState()
 
@@ -33,7 +37,10 @@ fun BreakScreen(viewModel: BreakViewModel = hiltViewModel(), navigateToAchieveme
 
 
     BreakScreenContent(
-        stopBreak = { viewModel.toggleBreak() },
+        stopBreak = {
+            viewModel.toggleBreak()
+            navigateToAdvice()
+        },
         modifier = Modifier
             .padding(
                 start = 12.dp,
@@ -99,14 +106,18 @@ fun BreakScreenContent(
                 text = stringResource(R.string.stop),
                 onClick = stopBreak,
                 icon = null,
-                modifier = Modifier.height(45.dp).padding(start = 6.dp)
+                modifier = Modifier
+                    .height(45.dp)
+                    .padding(start = 6.dp)
             )
 
             StyledButton(
                 text = stringResource(R.string.achievements),
                 onClick = navigateToAchievements,
                 icon = painterResource(R.drawable.ic_achievements),
-                modifier = Modifier.height(45.dp).padding(end = 6.dp)
+                modifier = Modifier
+                    .height(45.dp)
+                    .padding(end = 6.dp)
             )
         }
 

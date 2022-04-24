@@ -6,8 +6,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.unit.dp
-
 
 
 private val LightColorPalette = lightColors(
@@ -18,7 +16,8 @@ private val LightColorPalette = lightColors(
     onBackground = SoftBlack,
     onSurface = SoftBlack,
     onError = Red,
-    primaryVariant = SoftGreen
+    primaryVariant = SoftGreen,
+    secondaryVariant = SoftGrey
 )
 
 @OptIn(ExperimentalFoundationApi::class)

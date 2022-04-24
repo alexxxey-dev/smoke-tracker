@@ -37,7 +37,7 @@ fun CircleProgressBar(
 
 @Composable
 private fun ProgressBar(radius: Dp, strokeWidth: Dp, percentage: Float) {
-    val grey = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY)
+    val grey = MaterialTheme.colors.secondaryVariant
     val primary = MaterialTheme.colors.primary
     val primaryVariant = MaterialTheme.colors.primaryVariant
     Canvas(Modifier.size(radius * 2f)) {

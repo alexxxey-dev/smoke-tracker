@@ -8,6 +8,13 @@ class BreakRepository(
     private val myDataStore: MyDataStore
 ) {
 
+    suspend fun clear(){
+        saveSessionsPerWeek(0)
+        saveGramsPerSession(0.0)
+        saveGramPrice(0.0)
+        saveBreakDuration(0)
+        saveBreakStart(0)
+    }
     suspend fun toggleBreak(){
         myDataStore.toggleBreak()
     }

@@ -36,7 +36,8 @@ import com.eatmybrain.smoketracker.util.removeCommas
 
 @Composable
 fun ToleranceAdviceScreen(
-    viewModel: ToleranceAdviceViewModel = hiltViewModel()
+    viewModel: ToleranceAdviceViewModel = hiltViewModel(),
+    navigateToBreak:()->Unit
 ) {
     val showDialog = remember { mutableStateOf(false) }
     var freqError by remember { mutableStateOf(false) }
@@ -46,6 +47,7 @@ fun ToleranceAdviceScreen(
         onSaveClicked = { info ->
             if (!freqError && !amountError && !priceError) {
                 viewModel.startBreak(info)
+                navigateToBreak()
             }
         },
         showDialog = showDialog,

@@ -37,10 +37,17 @@ fun NavigationGraph(navController: NavHostController, breakActive:Boolean) {
                 BreakScreen(
                     navigateToAchievements = {
                         //TODO
+                    },
+                    navigateToAdvice = {
+                        navController.navigate(BottomNavItem.Tolerance.screenRoute)
                     }
                 )
             } else{
-                ToleranceAdviceScreen()
+                ToleranceAdviceScreen(
+                    navigateToBreak = {
+                        navController.navigate(BottomNavItem.Tolerance.screenRoute)
+                    }
+                )
             }
 
         }

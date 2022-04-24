@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val SoftWhite = Color(0xffFBFBFB)
 val White = Color(0xffFFFFFF)
 val Grey = Color(0xffC3C5C6)
+val SoftGrey = Color(0xffE5E5E5)
 val Green = Color(0xff769C72)
 val SoftGreen = Color(0xff9FCD9A)
 val SoftBlack = Color(0xff333333)

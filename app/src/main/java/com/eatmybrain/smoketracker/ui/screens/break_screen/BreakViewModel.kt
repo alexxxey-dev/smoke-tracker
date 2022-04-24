@@ -72,6 +72,9 @@ class BreakViewModel @Inject constructor(
 
 
     fun toggleBreak() = viewModelScope.launch {
-        withContext(Dispatchers.IO) { breakRepository.toggleBreak() }
+        withContext(Dispatchers.IO) {
+            breakRepository.toggleBreak()
+            breakRepository.clear()
+        }
     }
 }
