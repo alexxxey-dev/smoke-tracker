@@ -50,23 +50,25 @@ class BreakViewModel @Inject constructor(
 
 
     private fun startTimer() = viewModelScope.launch {
-        val breakFinishTime = withContext(Dispatchers.IO) {
-            breakRepository.getBreakStart() + breakRepository.getBreakDuration()
+        val startTime = withContext(Dispatchers.IO){ breakRepository.getBreakStart()}
+        val endTime = withContext(Dispatchers.IO) {
+            startTime + breakRepository.getBreakDuration()
         }
 
         timer = Timer()
         timer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                updateLeftTime(breakFinishTime)
+                updateTime(endTime,startTime)
             }
         }, ONE_SECOND, ONE_SECOND)
 
     }
 
-    private fun updateLeftTime(endTime:Long) = viewModelScope.launch {
+    private fun updateTime(endTime:Long, startTime:Long) = viewModelScope.launch {
         val currentTime = System.currentTimeMillis()
         val newValue = endTime - currentTime
         _leftTime.postValue(newValue)
+        _weedFreeTime.value = BreakCalculator.passedBreakTime(startTime)
     }
 
 
@@ -86,7 +88,7 @@ class BreakViewModel @Inject constructor(
             .formatZero()
         _gramsAvoided.value = "$gramsAvoided g"
 
-        _weedFreeTime.value = BreakCalculator.passedBreakTime(startTime)
+
     }
 
 

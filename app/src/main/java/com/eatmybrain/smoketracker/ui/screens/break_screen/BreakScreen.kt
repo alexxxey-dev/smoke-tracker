@@ -1,15 +1,23 @@
 package com.eatmybrain.smoketracker.ui.screens.break_screen
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,8 +28,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
 import com.eatmybrain.smoketracker.ui.components.Loading
-import com.eatmybrain.smoketracker.ui.components.StyledButton
-import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.Time
 
 
@@ -39,7 +45,7 @@ fun BreakScreen(
     val weedFreeTime by viewModel.weedFreeTime.observeAsState()
     if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
         Loading()
-    } else{
+    } else {
         BreakScreenContent(
             stopBreak = {
                 viewModel.toggleBreak()
@@ -56,7 +62,6 @@ fun BreakScreen(
     }
 
 
-
 }
 
 
@@ -71,16 +76,51 @@ fun BreakScreenContent(
     weedFreeTime: String,
     navigateToAchievements: () -> Unit
 ) {
-
+    val interactionSource = remember { MutableInteractionSource() }
     val statsCardCount = 3
     Column(
         modifier = modifier
     ) {
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 19.dp,
+                    end = 19.dp,
+                    top = 16.dp
+                )
+        ) {
+            StopButton(
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) { stopBreak() }
+                    .size(40.dp)
+            )
+
+            Icon(
+                painter = painterResource(R.drawable.ic_achievements),
+                contentDescription = "Achievements button",
+                modifier = Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) { navigateToAchievements() }
+                    .size(30.dp)
+                    .padding(top = 3.dp),
+                tint = MaterialTheme.colors.primary
+            )
+        }
+
+
+
         BreakProgress(
             totalTime = totalTime,
             leftTime = leftTime,
             modifier = Modifier
-                .padding(top = 30.dp)
+                .padding(top = 45 .dp)
                 .align(Alignment.CenterHorizontally),
             radius = 120.dp,
             strokeWidth = 18.dp
@@ -89,7 +129,6 @@ fun BreakScreenContent(
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
-                .weight(1f)
                 .padding(top = 60.dp)
                 .fillMaxWidth()
         ) {
@@ -103,40 +142,29 @@ fun BreakScreenContent(
                 subtitle = weedFreeTime,
                 cardsCount = statsCardCount
             )
-            StatsCard(title = stringResource(R.string.grams_not_smoked), subtitle = gramsAvoided, cardsCount = statsCardCount)
-        }
-
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 12.dp,
-                    end = 12.dp,
-                    bottom = Constants.BOTTOM_NAV_HEIGHT + 16.dp
-                )
-        ) {
-            StyledButton(
-                text = stringResource(R.string.stop),
-                onClick = stopBreak,
-                icon = null,
-                modifier = Modifier
-                    .height(45.dp)
-                    .padding(start = 6.dp)
-            )
-
-            StyledButton(
-                text = stringResource(R.string.achievements),
-                onClick = navigateToAchievements,
-                icon = painterResource(R.drawable.ic_achievements),
-                modifier = Modifier
-                    .height(45.dp)
-                    .padding(end = 6.dp)
+            StatsCard(
+                title = stringResource(R.string.grams_not_smoked),
+                subtitle = gramsAvoided,
+                cardsCount = statsCardCount
             )
         }
+
 
     }
+}
+
+@Composable
+private fun StopButton(modifier: Modifier = Modifier) {
+    val primaryColor =  MaterialTheme.colors.primary
+    Card(shape = CircleShape, modifier = modifier, border = BorderStroke(3.dp / 2, primaryColor)){
+        Icon(
+            painter = painterResource(R.drawable.ic_pause),
+            contentDescription = "Stop break button",
+            modifier = Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
+            tint = MaterialTheme.colors.secondary
+        )
+    }
+
 }
 
 @Composable
@@ -147,7 +175,7 @@ fun StatsCard(title: String, subtitle: String, cardsCount: Int) {
     Card(
         modifier = Modifier
             .size(width = cardWidth, height = cardHeight)
-            .padding(start = 5.dp, end = 5.dp),
+            .padding(start = 3.dp, end = 3.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = 2.dp
     ) {
@@ -175,7 +203,13 @@ fun StatsCard(title: String, subtitle: String, cardsCount: Int) {
 }
 
 @Composable
-fun BreakProgress(totalTime: Long, leftTime: Long, modifier: Modifier = Modifier, radius:Dp, strokeWidth:Dp) {
+fun BreakProgress(
+    totalTime: Long,
+    leftTime: Long,
+    modifier: Modifier = Modifier,
+    radius: Dp,
+    strokeWidth: Dp
+) {
     val percentage = leftTime.div(totalTime.toFloat())
     Box(
         contentAlignment = Alignment.Center,
@@ -185,7 +219,6 @@ fun BreakProgress(totalTime: Long, leftTime: Long, modifier: Modifier = Modifier
         TimeText(leftTime)
     }
 }
-
 
 
 @Composable
