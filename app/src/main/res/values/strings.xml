@@ -70,4 +70,10 @@
     <string name="grams_not_smoked_achievement">grams not smoked</string>
     <string name="days_without_weed_achievement">days without weed</string>
     <string name="my_achievements">My achievements</string>
+
+    <string name="premium">Premium</string>'
+    <string name="no_ads">No ads</string>
+    <string name="high_test">High test</string>
+    <string name="buy">Buy</string>
+    <string name="price">$ per month</string>
 </resources>

@@ -10,6 +10,7 @@ import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import com.eatmybrain.smoketracker.data.db.AppDatabase
 import com.eatmybrain.smoketracker.data.AchievementsProvider
 import com.eatmybrain.smoketracker.util.Constants
+import com.eatmybrain.smoketracker.util.PremiumUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,6 +36,10 @@ object AppModule {
     @Singleton
     fun provideDataStoreUtil(@ApplicationContext context: Context): MyDataStore =
         MyDataStore(context)
+
+    @Provides
+    @Singleton
+    fun providePremiumUtil(dataStore: MyDataStore) = PremiumUtil(dataStore)
 
     @Provides
     @Singleton

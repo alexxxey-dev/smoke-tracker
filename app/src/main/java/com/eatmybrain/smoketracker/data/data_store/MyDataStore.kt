@@ -12,6 +12,17 @@ import kotlinx.coroutines.flow.map
 class MyDataStore(private val context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.DATA_STORE_NAME)
 
+     fun hasPremium():Flow<Boolean>{
+        return context.dataStore.data.map {
+            it[PremiumScheme.HAS_PREMIUM] ?: false
+        }
+    }
+
+    suspend fun togglePremium() {
+        context.dataStore.edit {
+            it[PremiumScheme.HAS_PREMIUM] = !(it[PremiumScheme.HAS_PREMIUM] ?: false)
+        }
+    }
     suspend fun saveGramsPerSession(value:Double) {
         context.dataStore.edit {
             it[BreakScheme.GRAMS_PER_SESSION] = value
