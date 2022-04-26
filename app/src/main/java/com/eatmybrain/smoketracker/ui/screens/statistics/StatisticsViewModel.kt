@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import com.eatmybrain.smoketracker.data.SessionsRepository
 import com.eatmybrain.smoketracker.data.structs.Session
 import com.eatmybrain.smoketracker.ui.screens.statistics.enums.SessionsPeriod
-import com.eatmybrain.smoketracker.util.ChartDataParser
+import com.eatmybrain.smoketracker.util.ChartDataUtil
 import com.github.mikephil.charting.data.LineDataSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,8 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
-    private val sessionsRepository: SessionsRepository,
-    private val chartDataParser: ChartDataParser
+    private val sessionsRepository: SessionsRepository
 ) : ViewModel() {
 
     private val _sessionsPeriod = MutableLiveData<SessionsPeriod>()
@@ -47,7 +46,7 @@ class StatisticsViewModel @Inject constructor(
         val lineData = MutableLiveData<LineDataSet>()
         viewModelScope.launch {
             lineData.value = withContext(Dispatchers.IO){
-                chartDataParser.parse(sessions, sessionsPeriod)
+                ChartDataUtil.parse(sessions, sessionsPeriod)
             }
         }
         return lineData

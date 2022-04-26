@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eatmybrain.smoketracker.data.BreakRepository
-import com.eatmybrain.smoketracker.util.BreakCalculator
+import com.eatmybrain.smoketracker.util.BreakUtil
 import com.eatmybrain.smoketracker.util.formatZero
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -50,45 +50,37 @@ class BreakViewModel @Inject constructor(
 
 
     private fun startTimer() = viewModelScope.launch {
-        val startTime = withContext(Dispatchers.IO){ breakRepository.getBreakStart()}
         val endTime = withContext(Dispatchers.IO) {
-            startTime + breakRepository.getBreakDuration()
+            breakRepository.getBreakStart() + breakRepository.getBreakDuration()
         }
 
         timer = Timer()
         timer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                updateTime(endTime,startTime)
+                updateTime(endTime)
+                updateWeedFreeTime()
             }
         }, ONE_SECOND, ONE_SECOND)
 
     }
 
-    private fun updateTime(endTime:Long, startTime:Long) = viewModelScope.launch {
+    private fun updateTime(endTime:Long) = viewModelScope.launch {
         val currentTime = System.currentTimeMillis()
         val newValue = endTime - currentTime
         _leftTime.postValue(newValue)
-        _weedFreeTime.value = BreakCalculator.passedBreakTime(startTime)
     }
 
-
+    private fun updateWeedFreeTime()  = viewModelScope.launch{
+        _weedFreeTime.value = withContext(Dispatchers.IO) {
+            val time = breakRepository.weedFreeTime()
+            BreakUtil.passedTimeString(time)
+        }
+    }
     private fun loadStatistics() = viewModelScope.launch {
-        val startTime = withContext(Dispatchers.IO) { breakRepository.getBreakStart() }
-        val pricePerGram = withContext(Dispatchers.IO) { breakRepository.getGramPrice() }
-        val sessionsPerWeek = withContext(Dispatchers.IO) { breakRepository.getSessionsPerWeek() }
-        val gramsPerSession = withContext(Dispatchers.IO) { breakRepository.getGramsPerSession() }
-
-        val moneySaved = BreakCalculator
-            .moneySaved(sessionsPerWeek, pricePerGram, gramsPerSession, startTime)
-            .formatZero()
+        val moneySaved = withContext(Dispatchers.IO) { breakRepository.moneySaved().formatZero() }
         _moneySaved.value = "$moneySaved $"
-
-        val gramsAvoided = BreakCalculator
-            .gramsAvoided(sessionsPerWeek, gramsPerSession, startTime)
-            .formatZero()
+        val gramsAvoided =  withContext(Dispatchers.IO) { breakRepository.gramsAvoided().formatZero() }
         _gramsAvoided.value = "$gramsAvoided g"
-
-
     }
 
 

@@ -7,6 +7,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import kotlin.math.round
 
 @Composable
 fun currentRoute(navController: NavController): String? {
@@ -32,4 +33,11 @@ fun Double.formatZero(): String {
         maximumFractionDigits = 5
     }
     return format.format(this)
+}
+
+
+fun Double.round(decimals: Int): Double {
+    var multiplier = 1.0f
+    repeat(decimals) { multiplier *= 10 }
+    return round(this * multiplier) / multiplier
 }

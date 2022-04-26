@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eatmybrain.smoketracker.data.BreakRepository
 import com.eatmybrain.smoketracker.data.structs.SessionsInfo
-import com.eatmybrain.smoketracker.util.BreakCalculator
+import com.eatmybrain.smoketracker.util.BreakUtil
 import com.eatmybrain.smoketracker.util.double
 import com.eatmybrain.smoketracker.util.removeCommas
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,7 +52,7 @@ class ToleranceAdviceViewModel @Inject constructor(
 
 
     fun startBreak(sessionsInfo: SessionsInfo) = viewModelScope.launch{
-        val duration = BreakCalculator.breakTime(sessionsInfo)
+        val duration = BreakUtil.calculateBreakTime(sessionsInfo)
         val start = System.currentTimeMillis()
         val sessionsPerWeek = sessionsInfo.freq.toInt()
         val gramsPerSession = sessionsInfo.amount.double()

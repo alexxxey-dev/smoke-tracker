@@ -65,4 +65,9 @@
     <string name="weed_free_time">Weed free\ntime</string>
     <string name="grams_not_smoked">Grams not\nsmoked</string>
     <string name="achievements">Achievements</string>
+
+    <string name="dollars_saved_achievement">dollars saved</string>
+    <string name="grams_not_smoked_achievement">grams not smoked</string>
+    <string name="days_without_weed_achievement">days without weed</string>
+    <string name="my_achievements">My achievements</string>
 </resources>

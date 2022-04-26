@@ -3,10 +3,10 @@ package com.eatmybrain.smoketracker.util
 import com.eatmybrain.smoketracker.data.structs.SessionsInfo
 import java.util.concurrent.TimeUnit
 
-object BreakCalculator {
+object BreakUtil {
     private val weekDaysCount = 7L
 
-    fun breakTime(sessionsInfo: SessionsInfo): Long {
+    fun calculateBreakTime(sessionsInfo: SessionsInfo): Long {
         val sessionsPerWeek = sessionsInfo.freq.toInt()
         val smokeAmount = sessionsInfo.amount.double()
 
@@ -24,25 +24,25 @@ object BreakCalculator {
     }
 
 
-    fun moneySaved(
+    fun calculateMoneySaved(
         sessionsPerWeek: Int,
         gramPrice: Double,
         gramsPerSession: Double,
         breakStart: Long
     ): Double {
-        return gramsAvoided(sessionsPerWeek, gramsPerSession, breakStart) * gramPrice
+        val result = calculateGramsAvoided(sessionsPerWeek, gramsPerSession, breakStart) * gramPrice
+        return result.round(2)
     }
 
 
-    fun passedBreakTime(breakStart: Long): String {
-        val passedTime = System.currentTimeMillis() - breakStart
+    fun passedTimeString(passedTime: Long): String {
         val days = TimeUnit.MILLISECONDS.toDays(passedTime)
         val hours = TimeUnit.MILLISECONDS.toHours(passedTime)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(passedTime)
         return  if(days>0) "$days day(s)" else if(hours>0) "$hours hour(s)" else "${minutes + 1} min(s)"
     }
 
-    fun gramsAvoided(
+    fun calculateGramsAvoided(
         sessionsPerWeek: Int,
         gramsPerSession: Double,
         breakStart: Long
@@ -50,6 +50,7 @@ object BreakCalculator {
         val passedTime = System.currentTimeMillis() - breakStart
         val days = TimeUnit.MILLISECONDS.toDays(passedTime)
         val sessionsPerDay = sessionsPerWeek.div(weekDaysCount.toDouble())
-        return days * sessionsPerDay * gramsPerSession
+        val result = days * sessionsPerDay * gramsPerSession
+        return result.round(2)
     }
 }

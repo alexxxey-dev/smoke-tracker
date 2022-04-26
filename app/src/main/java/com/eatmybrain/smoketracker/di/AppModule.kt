@@ -8,7 +8,7 @@ import com.eatmybrain.smoketracker.data.BreakRepository
 import com.eatmybrain.smoketracker.data.api.StrainsApi
 import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import com.eatmybrain.smoketracker.data.db.AppDatabase
-import com.eatmybrain.smoketracker.util.ChartDataParser
+import com.eatmybrain.smoketracker.data.AchievementsProvider
 import com.eatmybrain.smoketracker.util.Constants
 import dagger.Module
 import dagger.Provides
@@ -42,7 +42,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideChartDataParser() = ChartDataParser()
+    fun provideAchievements(@ApplicationContext context:Context) = AchievementsProvider(context)
 
     @Provides
     @Singleton
@@ -58,7 +58,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBreakRepository(dataStore: MyDataStore) = BreakRepository(dataStore)
+    fun provideBreakRepository(dataStore: MyDataStore, achievementsProvider: AchievementsProvider) = BreakRepository(dataStore,achievementsProvider)
 
 
     @Provides

@@ -6,7 +6,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineDataSet
 import java.util.concurrent.TimeUnit
 
-class ChartDataParser {
+object ChartDataUtil {
 
      fun parse(sessionList: List<Session>, currentPeriod: SessionsPeriod): LineDataSet {
         val entryList = entryList(currentPeriod)

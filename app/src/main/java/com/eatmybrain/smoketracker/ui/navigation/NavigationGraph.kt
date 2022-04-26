@@ -6,16 +6,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.eatmybrain.smoketracker.ui.screens.achievements.AchievementsScreen
 import com.eatmybrain.smoketracker.ui.screens.add_session.AddSessionScreen
+import com.eatmybrain.smoketracker.ui.screens.break_screen.BreakScreen
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumScreen
 import com.eatmybrain.smoketracker.ui.screens.statistics.StatisticsScreen
 import com.eatmybrain.smoketracker.ui.screens.strain_search.StrainSearchScreen
 import com.eatmybrain.smoketracker.ui.screens.tolerance_advice.ToleranceAdviceScreen
-import com.eatmybrain.smoketracker.ui.screens.break_screen.BreakScreen
 import com.eatmybrain.smoketracker.util.Constants
 
 @Composable
-fun NavigationGraph(navController: NavHostController, breakActive:Boolean) {
+fun NavigationGraph(navController: NavHostController, breakActive: Boolean) {
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Statistics.screenRoute
@@ -31,18 +32,21 @@ fun NavigationGraph(navController: NavHostController, breakActive:Boolean) {
             )
         }
 
+        composable(AppScreens.Achievements.screenRoute) {
+            AchievementsScreen()
+        }
 
         composable(BottomNavItem.Tolerance.screenRoute) {
-            if(breakActive){
+            if (breakActive) {
                 BreakScreen(
                     navigateToAchievements = {
-                        //TODO
+                        navController.navigate(AppScreens.Achievements.screenRoute)
                     },
                     navigateToAdvice = {
                         navController.navigate(BottomNavItem.Tolerance.screenRoute)
                     }
                 )
-            } else{
+            } else {
                 ToleranceAdviceScreen(
                     navigateToBreak = {
                         navController.navigate(BottomNavItem.Tolerance.screenRoute)
@@ -82,3 +86,5 @@ fun NavigationGraph(navController: NavHostController, breakActive:Boolean) {
         }
     }
 }
+
+
