@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,21 +21,30 @@ import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StyledButton(text: String, onClick: () -> Unit, icon: Painter? = null, modifier: Modifier = Modifier) {
+fun StyledButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+    icon: Painter? = null,
+    textColor: Color = MaterialTheme.colors.onSurface
+) {
     Card(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(8.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically){
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier.padding(end = if(icon!=null) 12.dp else 16.dp, start = 16.dp),
+                color = textColor,
+                modifier = Modifier.padding(
+                    end = if (icon != null) 12.dp else 16.dp,
+                    start = 16.dp
+                ),
                 textAlign = TextAlign.Center
             )
-            if(icon!=null){
+            if (icon != null) {
                 Icon(
                     painter = icon,
                     contentDescription = "Button icon",
@@ -46,15 +56,17 @@ fun StyledButton(text: String, onClick: () -> Unit, icon: Painter? = null, modif
         }
     }
 }
+
 @Preview
 @Composable
-private fun StyledButtonPreview(){
+private fun StyledButtonPreview() {
     SmokeTrackerTheme {
         Scaffold {
-            Column{
+            it.calculateBottomPadding()
+            Column {
                 StyledButton(
                     text = stringResource(R.string.save),
-                    onClick = {  },
+                    onClick = { },
                     icon = painterResource(R.drawable.ic_save),
                     modifier = Modifier
                         .padding(top = 16.dp, end = 16.dp, bottom = 20.dp)
@@ -64,7 +76,7 @@ private fun StyledButtonPreview(){
 
                 StyledButton(
                     text = stringResource(R.string.save),
-                    onClick = {  },
+                    onClick = { },
                     icon = null,
                     modifier = Modifier
                         .padding(top = 16.dp, end = 16.dp, bottom = 20.dp)

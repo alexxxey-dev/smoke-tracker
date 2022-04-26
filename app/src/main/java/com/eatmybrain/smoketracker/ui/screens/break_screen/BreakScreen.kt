@@ -1,7 +1,6 @@
 package com.eatmybrain.smoketracker.ui.screens.break_screen
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,7 +24,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
 import com.eatmybrain.smoketracker.ui.components.Loading
+import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
+import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.Time
 
 
@@ -89,14 +89,14 @@ fun BreakScreenContent(
                     top = 16.dp
                 )
         ) {
-            StopButton(
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null
-                    ) { stopBreak() }
-                    .size(40.dp)
+            StyledButton(
+                text = stringResource(R.string.stop),
+                onClick = { stopBreak() },
+                modifier = Modifier.height(40.dp),
+                textColor = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY),
+                icon = null
             )
+
 
             Icon(
                 painter = painterResource(R.drawable.ic_achievements),
@@ -151,19 +151,6 @@ fun BreakScreenContent(
     }
 }
 
-@Composable
-private fun StopButton(modifier: Modifier = Modifier) {
-    val primaryColor =  MaterialTheme.colors.primary
-    Card(shape = CircleShape, modifier = modifier, border = BorderStroke(3.dp / 2, primaryColor)){
-        Icon(
-            painter = painterResource(R.drawable.ic_pause),
-            contentDescription = "Stop break button",
-            modifier = Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
-            tint = MaterialTheme.colors.secondary
-        )
-    }
-
-}
 
 @Composable
 fun StatsCard(title: String, subtitle: String, cardsCount: Int) {
@@ -266,11 +253,11 @@ private fun TimeTextItem(title: String, subtitle: String, modifier: Modifier = M
 
 @Composable
 @Preview
-private fun Preview(){
+private fun Preview() {
     SmokeTrackerTheme {
         Scaffold {
             it.calculateBottomPadding()
-            Column{
+            Column {
                 Spacer(Modifier.size(20.dp))
                 CircleProgressBar(radius = 150.dp, strokeWidth = 15.dp, percentage = 1f)
             }

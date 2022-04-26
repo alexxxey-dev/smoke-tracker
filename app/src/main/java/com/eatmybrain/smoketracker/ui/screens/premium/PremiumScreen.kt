@@ -1,5 +1,6 @@
 package com.eatmybrain.smoketracker.ui.screens.premium
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
+import com.eatmybrain.smoketracker.ui.theme.BrightGreen
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Constants
 
@@ -37,6 +39,11 @@ private fun Premium(onBuyClicked: () -> Unit, price:Int) {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        Image(
+            painter = painterResource(R.drawable.premium_background),
+            contentDescription = "Screen background",
+            modifier = Modifier.fillMaxSize()
+        )
         PremiumCard(onBuyClicked = onBuyClicked, price = price)
     }
 }
@@ -87,7 +94,9 @@ private fun PremiumCard(onBuyClicked: () -> Unit, price:Int) {
                 text = "$price${stringResource(R.string.price)}",
                 color = MaterialTheme.colors.secondary,
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(top = 8.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
 
@@ -99,7 +108,7 @@ private fun PremiumCard(onBuyClicked: () -> Unit, price:Int) {
 @Composable
 private fun ButtonBuy(modifier: Modifier, onClick: () -> Unit) {
     Card(
-        backgroundColor = MaterialTheme.colors.primary,
+        backgroundColor = BrightGreen,
         shape = RoundedCornerShape(8.dp),
         modifier = modifier,
         onClick = onClick
@@ -122,7 +131,7 @@ private fun PremiumCardRow(text: String, modifier: Modifier) {
         Card(
             shape = CircleShape,
             modifier = Modifier.size(8.dp),
-            backgroundColor = MaterialTheme.colors.primary
+            backgroundColor = BrightGreen
         ) {}
 
         Text(
@@ -150,7 +159,7 @@ private fun PremiumCardHeader(modifier: Modifier) {
         Icon(
             painter = painterResource(R.drawable.ic_star),
             contentDescription = "Star icon",
-            tint = MaterialTheme.colors.primary,
+            tint = BrightGreen,
             modifier = Modifier.padding(start = 8.dp)
         )
     }
