@@ -33,16 +33,13 @@ import com.eatmybrain.smoketracker.util.Time
             style = Stroke(strokeWidth.toPx(), cap = StrokeCap.Round)
         )
 
-        val convertValue = (percentage / 30) * 360
-
         drawArc(
             brush = Brush.sweepGradient(listOf(
-                primary,
-                primary,
+                primaryVariant,
                 primaryVariant
             )),
             startAngle = -90f,
-            sweepAngle = convertValue,
+            sweepAngle = 360f * percentage,
             useCenter = false,
             style = Stroke(strokeWidth.toPx(), cap = StrokeCap.Round)
         )

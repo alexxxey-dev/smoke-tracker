@@ -7,10 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -22,12 +19,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
 import com.eatmybrain.smoketracker.ui.components.Loading
+import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Time
 
 
@@ -51,7 +50,6 @@ fun BreakScreen(
                 viewModel.toggleBreak()
                 navigateToAdvice()
             },
-            modifier = Modifier.fillMaxSize(),
             totalTime = totalTime!!,
             leftTime = leftTime!!,
             gramsAvoided = gramsAvoided!!,
@@ -68,7 +66,6 @@ fun BreakScreen(
 @Composable
 fun BreakScreenContent(
     stopBreak: () -> Unit,
-    modifier: Modifier,
     totalTime: Long,
     leftTime: Long,
     gramsAvoided: String,
@@ -79,7 +76,7 @@ fun BreakScreenContent(
     val interactionSource = remember { MutableInteractionSource() }
     val statsCardCount = 3
     Column(
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     ) {
 
         Row(
@@ -104,10 +101,11 @@ fun BreakScreenContent(
             Icon(
                 painter = painterResource(R.drawable.ic_achievements),
                 contentDescription = "Achievements button",
-                modifier = Modifier.clickable(
-                    interactionSource = interactionSource,
-                    indication = null
-                ) { navigateToAchievements() }
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) { navigateToAchievements() }
                     .size(30.dp)
                     .padding(top = 3.dp),
                 tint = MaterialTheme.colors.primary
@@ -120,7 +118,7 @@ fun BreakScreenContent(
             totalTime = totalTime,
             leftTime = leftTime,
             modifier = Modifier
-                .padding(top = 45 .dp)
+                .padding(top = 45.dp)
                 .align(Alignment.CenterHorizontally),
             radius = 120.dp,
             strokeWidth = 18.dp
@@ -210,7 +208,7 @@ fun BreakProgress(
     radius: Dp,
     strokeWidth: Dp
 ) {
-    val percentage = leftTime.div(totalTime.toFloat())
+    val percentage = 1f - leftTime.div(totalTime.toFloat())
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.size(radius * 2f)
@@ -263,4 +261,21 @@ private fun TimeTextItem(title: String, subtitle: String, modifier: Modifier = M
         )
     }
 
+}
+
+
+@Composable
+@Preview
+private fun Preview(){
+    SmokeTrackerTheme {
+        Scaffold {
+            it.calculateBottomPadding()
+            Column{
+                Spacer(Modifier.size(20.dp))
+                CircleProgressBar(radius = 150.dp, strokeWidth = 15.dp, percentage = 1f)
+            }
+
+
+        }
+    }
 }
