@@ -93,7 +93,6 @@ fun BreakScreenContent(
                 text = stringResource(R.string.stop),
                 onClick = { stopBreak() },
                 modifier = Modifier.height(40.dp),
-                textColor = MaterialTheme.colors.onBackground.copy(alpha = Constants.ALPHA_GREY),
                 icon = null
             )
 
