@@ -25,37 +25,43 @@ class AchievementsProvider(
                 number = 25,
                 description = description,
                 type = type,
-                achieved = moneySaved >= 25
+                achieved = moneySaved >= 25,
+                index = 0
             ),
             Achievement(
                 number = 50,
                 description = description,
                 type = type,
-                achieved = moneySaved >= 50
+                achieved = moneySaved >= 50,
+                index = 1
             ),
             Achievement(
                 number = 100,
                 description = description,
                 type = type,
-                achieved = moneySaved >= 100
+                achieved = moneySaved >= 100,
+                index = 2
             ),
             Achievement(
                 number = 250,
                 description = description,
                 type = type,
-                achieved = moneySaved >= 250
+                achieved = moneySaved >= 250,
+                index = 3
             ),
             Achievement(
                 number = 500,
                 description = description,
                 type = type,
-                achieved = moneySaved >= 500
+                achieved = moneySaved >= 500,
+                index = 4
             ),
             Achievement(
                 number = 1000,
                 description = description,
                 type = type,
-                achieved = moneySaved >= 1000
+                achieved = moneySaved >= 1000,
+                index = 5
             )
         )
     }
@@ -68,37 +74,43 @@ class AchievementsProvider(
                 number = 5,
                 description = description,
                 type = type,
-                achieved = gramsAvoided >= 5
+                achieved = gramsAvoided >= 5,
+                index = 0
             ),
             Achievement(
                 number = 10,
                 description = description,
                 type = type,
-                achieved = gramsAvoided >= 10
+                achieved = gramsAvoided >= 10,
+                index = 1
             ),
             Achievement(
                 number = 15,
                 description = description,
                 type = type,
-                achieved = gramsAvoided >= 15
+                achieved = gramsAvoided >= 15,
+                index = 2
             ),
             Achievement(
                 number = 25,
                 description = description,
                 type = type,
-                achieved = gramsAvoided >= 25
+                achieved = gramsAvoided >= 25,
+                index = 3
             ),
             Achievement(
                 number = 35,
                 description = description,
                 type = type,
-                achieved = gramsAvoided >= 35
+                achieved = gramsAvoided >= 35,
+                index = 4
             ),
             Achievement(
                 number = 50,
                 description = description,
                 type = type,
-                achieved = gramsAvoided >= 50
+                achieved = gramsAvoided >= 50,
+                index = 5
             )
         )
     }
@@ -112,37 +124,43 @@ class AchievementsProvider(
                 number = 7,
                 description = description,
                 type = type,
-                achieved = weedFreeDays >= 7
+                achieved = weedFreeDays >= 7,
+                index = 0
             ),
             Achievement(
                 number = 14,
                 description = description,
                 type = type,
-                achieved =  weedFreeDays >= 14
+                achieved =  weedFreeDays >= 14,
+                index = 1
             ),
             Achievement(
                 number = 21,
                 description = description,
                 type = type,
-                achieved =  weedFreeDays >= 21
+                achieved =  weedFreeDays >= 21,
+                index = 2
             ),
             Achievement(
                 number = 30,
                 description = description,
                 type = type,
-                achieved =  weedFreeDays >= 30
+                achieved =  weedFreeDays >= 30,
+                index = 3
             ),
             Achievement(
                 number = 60,
                 description = description,
                 type = type,
-                achieved =  weedFreeDays >= 60
+                achieved =  weedFreeDays >= 60,
+                index = 4
             ),
             Achievement(
                 number = 90,
                 description = description,
                 type = type,
-                achieved =  weedFreeDays >= 90
+                achieved =  weedFreeDays >= 90,
+                index = 5
             ),
         )
     }

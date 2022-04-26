@@ -15,7 +15,7 @@ class BreakRepository(
             moneySaved = moneySaved(),
             gramsAvoided = gramsAvoided(),
             weedFreeTime = weedFreeTime()
-        )
+        ).sortedBy { it.index }
     }
 
     suspend fun weedFreeTime():Long{

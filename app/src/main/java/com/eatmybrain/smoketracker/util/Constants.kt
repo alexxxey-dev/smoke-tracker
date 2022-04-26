@@ -11,6 +11,7 @@ object Constants {
     const val ARGUMENT_SESSION_TIMESTAMP = "SESSION_ID"
     const val ALPHA_GREY = 0.4f
 
-
+    const val ACHIEVEMENTS_PER_PAGE = 9
+    const val ACHIEVEMENTS_PER_ROW = 3
     const val DATA_STORE_NAME = "SMOKE_TRACKER_DATA_STORE"
 }
