@@ -70,17 +70,13 @@ class AddSessionViewModel @AssistedInject constructor(
             pricePerGram = pricePerGram
         )
         withContext(Dispatchers.IO) {
-            stopBreak()
             sessionsRepository.addSession(session)
         }
 
     }
 
-    private suspend fun stopBreak(){
-        //TODO display this to user
-        if(breakRepository.isBreakActive().first()){
-            breakRepository.toggleBreak()
-        }
+     fun stopBreak() = viewModelScope.launch{
+        withContext(Dispatchers.IO){breakRepository.toggleBreak(false)}
     }
     fun onSaveClicked(
         strainName: String,

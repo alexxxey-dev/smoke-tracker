@@ -1,6 +1,8 @@
 package com.eatmybrain.smoketracker.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -9,6 +11,7 @@ import androidx.navigation.navArgument
 import com.eatmybrain.smoketracker.ui.screens.achievements.AchievementsScreen
 import com.eatmybrain.smoketracker.ui.screens.add_session.AddSessionScreen
 import com.eatmybrain.smoketracker.ui.screens.break_screen.BreakScreen
+import com.eatmybrain.smoketracker.ui.screens.break_screen.BreakViewModel
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumScreen
 import com.eatmybrain.smoketracker.ui.screens.statistics.StatisticsScreen
 import com.eatmybrain.smoketracker.ui.screens.strain_search.StrainSearchScreen
@@ -16,7 +19,9 @@ import com.eatmybrain.smoketracker.ui.screens.tolerance_advice.ToleranceAdviceSc
 import com.eatmybrain.smoketracker.util.Constants
 
 @Composable
-fun NavigationGraph(navController: NavHostController, breakActive: Boolean) {
+fun NavigationGraph(navController: NavHostController) {
+
+
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Statistics.screenRoute
@@ -36,23 +41,20 @@ fun NavigationGraph(navController: NavHostController, breakActive: Boolean) {
             AchievementsScreen()
         }
 
-        composable(BottomNavItem.Tolerance.screenRoute) {
-            if (breakActive) {
-                BreakScreen(
-                    navigateToAchievements = {
-                        navController.navigate(AppScreens.Achievements.screenRoute)
-                    },
-                    navigateToAdvice = {
-                        navController.navigate(BottomNavItem.Tolerance.screenRoute)
-                    }
-                )
-            } else {
-                ToleranceAdviceScreen(
-                    navigateToBreak = {
-                        navController.navigate(BottomNavItem.Tolerance.screenRoute)
-                    }
-                )
-            }
+        composable(BottomNavItem.ToleranceBreak.screenRoute){
+            BreakScreen(
+                navigateToAchievements = {
+                    navController.navigate(AppScreens.Achievements.screenRoute)
+                },
+                navigateToAdvice = {
+                    navController.navigate(BottomNavItem.ToleranceAdvice.screenRoute)
+                }
+            )
+        }
+        composable(BottomNavItem.ToleranceAdvice.screenRoute) {
+            ToleranceAdviceScreen(navigateToBreak = {
+                navController.navigate(BottomNavItem.ToleranceBreak.screenRoute)
+            })
 
         }
 
@@ -64,13 +66,14 @@ fun NavigationGraph(navController: NavHostController, breakActive: Boolean) {
             PremiumScreen()
         }
 
+
         composable(
-            route = "${AppScreens.AddSession.screenRoute}/{${Constants.ARGUMENT_SESSION_TIMESTAMP}}",
+            route = "${AppScreens.AddSession.screenRoute}/{${Constants.ARGUMENT_SESSION_ID}}",
             arguments = listOf(
-                navArgument(Constants.ARGUMENT_SESSION_TIMESTAMP) { type = NavType.LongType }
+                navArgument(Constants.ARGUMENT_SESSION_ID) { type = NavType.LongType }
             )
         ) {
-            val sessionTimestamp = it.arguments?.getLong(Constants.ARGUMENT_SESSION_TIMESTAMP) ?: 0
+            val sessionId = it.arguments?.getLong(Constants.ARGUMENT_SESSION_ID) ?: 0
             AddSessionScreen(
                 navigateToStrainInfo = {
                     //TODO
@@ -81,7 +84,7 @@ fun NavigationGraph(navController: NavHostController, breakActive: Boolean) {
                 navigateHome = {
                     navController.navigate(BottomNavItem.Statistics.screenRoute)
                 },
-                sessionTimestamp = sessionTimestamp
+                sessionId = sessionId
             )
         }
     }

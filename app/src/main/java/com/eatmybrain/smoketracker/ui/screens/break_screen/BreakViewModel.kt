@@ -1,9 +1,6 @@
 package com.eatmybrain.smoketracker.ui.screens.break_screen
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.eatmybrain.smoketracker.data.BreakRepository
 import com.eatmybrain.smoketracker.util.BreakUtil
 import com.eatmybrain.smoketracker.util.formatZero
@@ -34,22 +31,24 @@ class BreakViewModel @Inject constructor(
     private val _gramsAvoided = MutableLiveData<String>()
     val gramsAvoided: LiveData<String> = _gramsAvoided
 
+    val isBreakActive = breakRepository.isBreakActive()
+
     private var timer: Timer? = null
     private val ONE_SECOND = 1000L
 
-    init {
+    fun init() = viewModelScope.launch {
         loadTotalTime()
         startTimer()
         loadStatistics()
     }
 
 
-    private fun loadTotalTime() = viewModelScope.launch{
+    private suspend fun loadTotalTime() {
         _totalTime.value = withContext(Dispatchers.IO) { breakRepository.getBreakDuration() }
     }
 
 
-    private fun startTimer() = viewModelScope.launch {
+    private suspend fun startTimer()  {
         val endTime = withContext(Dispatchers.IO) {
             breakRepository.getBreakStart() + breakRepository.getBreakDuration()
         }
@@ -63,6 +62,13 @@ class BreakViewModel @Inject constructor(
         }, ONE_SECOND, ONE_SECOND)
 
     }
+    private suspend fun loadStatistics() {
+        val moneySaved = withContext(Dispatchers.IO) { breakRepository.moneySaved().formatZero() }
+        _moneySaved.value = "$moneySaved $"
+        val gramsAvoided =  withContext(Dispatchers.IO) { breakRepository.gramsAvoided().formatZero() }
+        _gramsAvoided.value = "$gramsAvoided g"
+    }
+
 
     private fun updateTime(endTime:Long) = viewModelScope.launch {
         val currentTime = System.currentTimeMillis()
@@ -76,17 +82,12 @@ class BreakViewModel @Inject constructor(
             BreakUtil.passedTimeString(time)
         }
     }
-    private fun loadStatistics() = viewModelScope.launch {
-        val moneySaved = withContext(Dispatchers.IO) { breakRepository.moneySaved().formatZero() }
-        _moneySaved.value = "$moneySaved $"
-        val gramsAvoided =  withContext(Dispatchers.IO) { breakRepository.gramsAvoided().formatZero() }
-        _gramsAvoided.value = "$gramsAvoided g"
-    }
 
 
-    fun toggleBreak() = viewModelScope.launch {
+
+    fun stopBreak() = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            breakRepository.toggleBreak()
+            breakRepository.toggleBreak(false)
             breakRepository.clear()
         }
     }

@@ -2,15 +2,12 @@ package com.eatmybrain.smoketracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.eatmybrain.smoketracker.data.SessionsRepository
-import com.eatmybrain.smoketracker.data.StrainsRepository
-import com.eatmybrain.smoketracker.data.BreakRepository
+import com.eatmybrain.smoketracker.data.*
 import com.eatmybrain.smoketracker.data.api.StrainsApi
 import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import com.eatmybrain.smoketracker.data.db.AppDatabase
-import com.eatmybrain.smoketracker.data.AchievementsProvider
 import com.eatmybrain.smoketracker.util.Constants
-import com.eatmybrain.smoketracker.util.PremiumUtil
+import com.eatmybrain.smoketracker.util.Premium
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,7 +36,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePremiumUtil(dataStore: MyDataStore) = PremiumUtil(dataStore)
+    fun providePremiumRepository(premium: Premium) = BillingRepository(premium)
+
+    @Provides
+    @Singleton
+    fun providePremiumUtil(dataStore: MyDataStore) = Premium(dataStore)
 
     @Provides
     @Singleton

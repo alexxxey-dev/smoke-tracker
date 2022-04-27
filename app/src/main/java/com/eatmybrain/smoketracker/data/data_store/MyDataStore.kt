@@ -81,10 +81,9 @@ class MyDataStore(private val context: Context) {
             settings[BreakScheme.DURATION] = duration
         }
     }
-    suspend fun toggleBreak() {
+    suspend fun toggleBreak(boolean: Boolean) {
         context.dataStore.edit { settings ->
-            settings[BreakScheme.IS_ACTIVE] =
-                !(settings[BreakScheme.IS_ACTIVE] ?: false)
+            settings[BreakScheme.IS_ACTIVE] =boolean
         }
     }
 

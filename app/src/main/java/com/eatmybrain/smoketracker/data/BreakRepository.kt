@@ -44,8 +44,8 @@ class BreakRepository(
         saveBreakDuration(0)
         saveBreakStart(0)
     }
-    suspend fun toggleBreak(){
-        dataStore.toggleBreak()
+    suspend fun toggleBreak(boolean:Boolean){
+        dataStore.toggleBreak(boolean)
     }
 
     fun isBreakActive(): Flow<Boolean> {

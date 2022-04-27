@@ -45,6 +45,9 @@ fun ToleranceAdviceScreen(
     var priceError by remember { mutableStateOf(false) }
     ToleranceAdvice(
         onSaveClicked = { info ->
+            freqError= viewModel.checkFreqError(info.freq)
+            amountError = viewModel.checkAmountError(info.amount)
+            priceError= viewModel.checkPriceError(info.price)
             if (!freqError && !amountError && !priceError) {
                 viewModel.startBreak(info)
                 navigateToBreak()

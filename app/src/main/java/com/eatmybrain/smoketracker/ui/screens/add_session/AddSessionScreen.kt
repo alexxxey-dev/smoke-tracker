@@ -21,6 +21,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -40,12 +42,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.eatmybrain.smoketracker.ui.activity.MainActivity
 import com.eatmybrain.smoketracker.R
+import com.eatmybrain.smoketracker.ui.activity.MainActivity
 import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
+import com.eatmybrain.smoketracker.ui.screens.premium.PremiumViewModel
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.countCommas
@@ -57,21 +61,23 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AddSessionScreen(
-    sessionTimestamp: Long,
-    viewModel: AddSessionViewModel = addSessionViewModel(sessionTimestamp),
+    sessionId: Long,
+    addViewModel: AddSessionViewModel = addSessionViewModel(sessionId),
+    premiumViewModel: PremiumViewModel = hiltViewModel(),
     navigateToStrainInfo: (String) -> Unit,
     navigateToHighTest: () -> Unit,
     navigateHome: () -> Unit
 ) {
-    val session by viewModel.session.observeAsState()
-    if (session == null && sessionTimestamp != 0L) return
-
+    val session by addViewModel.session.observeAsState()
+    if (session == null && sessionId != 0L) return
+    var showStopBreakDialog by remember { mutableStateOf(false) }
     var strainName by remember { mutableStateOf(session?.strainInfo?.title ?: "") }
     var price by remember { mutableStateOf(session?.pricePerGram?.formatZero() ?: "") }
     var moodBefore by remember { mutableStateOf(session?.moodBefore ?: 0f) }
     var moodAfter by remember { mutableStateOf(session?.moodAfter ?: 0f) }
     var highStrength by remember { mutableStateOf(session?.highStrength ?: 0) }
     var amount by remember { mutableStateOf(session?.amount?.formatZero() ?: "") }
+    val hasPremium by premiumViewModel.hasPremium.observeAsState()
     var amountType by remember {
         mutableStateOf(
             session?.amountType?.string() ?: AmountType.Gram.string()
@@ -83,7 +89,7 @@ fun AddSessionScreen(
     val context = LocalContext.current
 
     val onSaveClicked = {
-        val errorStringId = viewModel.onSaveClicked(
+        val errorStringId = addViewModel.onSaveClicked(
             strainName = strainName,
             pricePerGram = price,
             moodBefore = moodBefore,
@@ -92,15 +98,32 @@ fun AddSessionScreen(
             amount = amount,
             amountType = amountType
         )
+
         if (errorStringId == null) {
-            navigateHome()
+            if (sessionId == 0L) {
+                showStopBreakDialog = true
+            } else {
+                navigateHome()
+            }
         } else {
             val text = context.getString(errorStringId)
             scope.launch { snackbarHostState.showSnackbar(text) }
         }
     }
 
-    Box(contentAlignment = Alignment.BottomCenter) {
+    Box(contentAlignment = Center) {
+        if (showStopBreakDialog) {
+            StopBreakDialog(
+                stopBreak = { addViewModel.stopBreak() },
+                navigateHome = {
+                    navigateHome()
+                },
+                dismissDialog = {
+                    showStopBreakDialog = false
+                })
+        }
+
+
         AddSession(
             strainName = strainName,
             price = price,
@@ -117,16 +140,33 @@ fun AddSessionScreen(
             onHighStrengthChanged = { highStrength = it },
             onAmountChanged = { amount = it },
             onStrainInfoClicked = { navigateToStrainInfo(strainName) },
-            onHighTestClicked = { navigateToHighTest() },
+            onHighTestClicked = {
+                if (hasPremium == true) {
+                    navigateToHighTest()
+                } else {
+                    //TODO show dialog
+                }
+            },
             onSaveClicked = { onSaveClicked() }
         )
 
-        SnackbarHost(hostState = snackbarHostState)
+        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(BottomCenter))
     }
 
 
 }
 
+@Composable
+private fun StopBreakDialog(
+    stopBreak: () -> Unit,
+    navigateHome: () -> Unit,
+    dismissDialog: () -> Unit
+) {
+    //TODO show dialog
+    stopBreak()
+    navigateHome()
+    dismissDialog()
+}
 
 @Composable
 private fun AddSession(
@@ -621,7 +661,9 @@ private fun addSessionViewModel(timestamp: Long): AddSessionViewModel {
 @Composable
 fun AddSessionPreview() {
     SmokeTrackerTheme {
+
         Scaffold {
+            it
             AddSession(
                 strainName = "",
                 price = "",

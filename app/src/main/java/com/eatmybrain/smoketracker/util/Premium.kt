@@ -4,24 +4,24 @@ import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
-class PremiumUtil(
+class Premium(
     private val dataStore: MyDataStore
 ) {
     suspend fun activate(){
-        val hasPremium = check().first()
+        val hasPremium = available().first()
         if(!hasPremium){
             dataStore.togglePremium()
         }
     }
 
     suspend fun deactivate(){
-        val hasPremium = check().first()
+        val hasPremium = available().first()
         if(hasPremium){
             dataStore.togglePremium()
         }
     }
 
-    fun check() : Flow<Boolean> {
+    fun available() : Flow<Boolean> {
         return dataStore.hasPremium()
     }
 }

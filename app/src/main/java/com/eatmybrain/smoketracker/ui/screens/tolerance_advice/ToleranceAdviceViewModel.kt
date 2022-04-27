@@ -64,7 +64,7 @@ class ToleranceAdviceViewModel @Inject constructor(
                 saveSessionsPerWeek(sessionsPerWeek)
                 saveBreakDuration(duration)
                 saveBreakStart(start)
-                toggleBreak()
+                toggleBreak(true)
             }
         }
     }

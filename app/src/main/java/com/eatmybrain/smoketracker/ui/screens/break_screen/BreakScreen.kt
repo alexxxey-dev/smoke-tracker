@@ -1,16 +1,12 @@
 package com.eatmybrain.smoketracker.ui.screens.break_screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,29 +21,35 @@ import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
 import com.eatmybrain.smoketracker.ui.components.Loading
 import com.eatmybrain.smoketracker.ui.components.StyledButton
+import com.eatmybrain.smoketracker.ui.screens.premium.PremiumViewModel
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
-import com.eatmybrain.smoketracker.util.Constants
 import com.eatmybrain.smoketracker.util.Time
 
 
 @Composable
 fun BreakScreen(
-    viewModel: BreakViewModel = hiltViewModel(),
+    breakViewModel: BreakViewModel = hiltViewModel(),
+    premiumViewModel:PremiumViewModel = hiltViewModel(),
     navigateToAchievements: () -> Unit,
-    navigateToAdvice: () -> Unit
+    navigateToAdvice:()->Unit
 ) {
-    val totalTime by viewModel.totalTime.observeAsState()
-    val leftTime by viewModel.leftTime.observeAsState()
+    val breakActive = breakViewModel.isBreakActive.collectAsState(initial = false)
+    val totalTime by breakViewModel.totalTime.observeAsState()
+    val leftTime by breakViewModel.leftTime.observeAsState()
+    val hasPremium by premiumViewModel.hasPremium.observeAsState()
+    val gramsAvoided by breakViewModel.gramsAvoided.observeAsState()
+    val moneySaved by breakViewModel.moneySaved.observeAsState()
+    val weedFreeTime by breakViewModel.weedFreeTime.observeAsState()
 
-    val gramsAvoided by viewModel.gramsAvoided.observeAsState()
-    val moneySaved by viewModel.moneySaved.observeAsState()
-    val weedFreeTime by viewModel.weedFreeTime.observeAsState()
+    LaunchedEffect(breakActive){
+        breakViewModel.init()
+    }
     if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
         Loading()
     } else {
         BreakScreenContent(
             stopBreak = {
-                viewModel.toggleBreak()
+                breakViewModel.stopBreak()
                 navigateToAdvice()
             },
             totalTime = totalTime!!,
@@ -55,7 +57,14 @@ fun BreakScreen(
             gramsAvoided = gramsAvoided!!,
             moneySaved = moneySaved!!,
             weedFreeTime = weedFreeTime!!,
-            navigateToAchievements = navigateToAchievements
+            navigateToAchievements = {
+                if(hasPremium == true){
+                    navigateToAchievements()
+                    navigateToAdvice()
+                } else{
+                    //TODO show dialog
+                }
+            }
         )
     }
 

@@ -76,4 +76,5 @@
     <string name="high_test">High test</string>
     <string name="buy">Buy</string>
     <string name="price">$ per month</string>
+    <string name="error">Error</string>
 </resources>
