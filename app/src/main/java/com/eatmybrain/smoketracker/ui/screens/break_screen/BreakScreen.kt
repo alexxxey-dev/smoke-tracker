@@ -32,11 +32,10 @@ fun BreakScreen(
     navigateToAdvice: () -> Unit
 ) {
     val breakActive = breakViewModel.isBreakActive.observeAsState()
-
-
     val hasPremium by premiumViewModel.hasPremium.observeAsState()
     val showPremiumDialog = remember { mutableStateOf(false) }
     val showStopBreakDialog = remember { mutableStateOf(false) }
+
     LaunchedEffect(breakActive) {
         breakViewModel.init()
     }
@@ -94,7 +93,7 @@ private fun BreakUI(
     val moneySaved by breakViewModel.moneySaved.observeAsState()
     val weedFreeTime by breakViewModel.weedFreeTime.observeAsState()
 
-    if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
+    if (totalTime == null || leftTime == null) {
         Loading()
     } else {
         BreakScreenContent(
