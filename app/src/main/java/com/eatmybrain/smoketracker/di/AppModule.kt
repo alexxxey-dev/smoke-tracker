@@ -7,7 +7,7 @@ import com.eatmybrain.smoketracker.data.api.StrainsApi
 import com.eatmybrain.smoketracker.data.data_store.MyDataStore
 import com.eatmybrain.smoketracker.data.db.AppDatabase
 import com.eatmybrain.smoketracker.util.Constants
-import com.eatmybrain.smoketracker.util.Premium
+import com.eatmybrain.smoketracker.util.PremiumUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,11 +36,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePremiumRepository(premium: Premium) = BillingRepository(premium)
+    fun providePremiumRepository(premiumUtil: PremiumUtil) = BillingRepository(premiumUtil)
 
     @Provides
     @Singleton
-    fun providePremiumUtil(dataStore: MyDataStore) = Premium(dataStore)
+    fun providePremiumUtil(dataStore: MyDataStore) = PremiumUtil(dataStore)
 
     @Provides
     @Singleton

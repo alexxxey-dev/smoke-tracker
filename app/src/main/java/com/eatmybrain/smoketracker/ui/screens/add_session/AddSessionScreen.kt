@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.activity.MainActivity
+import com.eatmybrain.smoketracker.ui.components.PremiumDialog
 import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
@@ -74,6 +75,8 @@ fun AddSessionScreen(
     if (session == null && sessionId != 0L) return
     val breakActive by breakViewModel.isBreakActive.observeAsState()
     var showStopBreakDialog by remember { mutableStateOf(false) }
+    var showPremiumDialog by remember { mutableStateOf(false) }
+    val premiumPrice by premiumViewModel.price.observeAsState()
     var strainName by remember { mutableStateOf(session?.strainInfo?.title ?: "") }
     var price by remember { mutableStateOf(session?.pricePerGram?.formatZero() ?: "") }
     var moodBefore by remember { mutableStateOf(session?.moodBefore ?: 0f) }
@@ -127,6 +130,14 @@ fun AddSessionScreen(
             )
         }
 
+        if(showPremiumDialog){
+            PremiumDialog(
+                onDismiss ={showPremiumDialog = false} ,
+                onBuyClicked = { premiumViewModel.purchase() },
+                price = premiumPrice!!
+            )
+        }
+
 
         AddSession(
             strainName = strainName,
@@ -148,7 +159,7 @@ fun AddSessionScreen(
                 if (hasPremium == true) {
                     navigateToHighTest()
                 } else {
-                    //TODO show dialog
+                    showPremiumDialog = true
                 }
             },
             onSaveClicked = { onSaveClicked() }

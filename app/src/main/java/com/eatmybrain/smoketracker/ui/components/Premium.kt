@@ -18,24 +18,21 @@ import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.theme.BrightGreen
 
 @Composable
-fun PremiumDialog(showDialog:MutableState<Boolean>, onBuyClicked: () -> Unit, price: Int){
+fun PremiumDialog(onDismiss:()->Unit, onBuyClicked: () -> Unit, price: Int){
     Dialog(onDismissRequest = {
-        showDialog.value = false
+        onDismiss()
     }){
-        PremiumCard(onBuyClicked = { onBuyClicked() }, price = price)
+        PremiumCard(onBuyClicked = { onBuyClicked() }, price = price, modifier = Modifier.padding(10.dp,5.dp,10.dp,10.dp))
     }
 }
 
 
 @Composable
-fun PremiumCard(onBuyClicked: () -> Unit, price:Int) {
+fun PremiumCard(onBuyClicked: () -> Unit, price:Int, modifier: Modifier) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = 2.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 45.dp)
-            .height(300.dp)
+        modifier = modifier
     ) {
         Column {
             PremiumCardHeader(
@@ -74,7 +71,7 @@ fun PremiumCard(onBuyClicked: () -> Unit, price:Int) {
                 color = MaterialTheme.colors.secondary,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier
-                    .padding(top = 8.dp)
+                    .padding(top = 8.dp, bottom = 16.dp)
                     .align(Alignment.CenterHorizontally)
             )
 

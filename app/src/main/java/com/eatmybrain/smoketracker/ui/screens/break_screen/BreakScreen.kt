@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
 import com.eatmybrain.smoketracker.ui.components.Loading
+import com.eatmybrain.smoketracker.ui.components.PremiumDialog
 import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumViewModel
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
@@ -29,9 +30,9 @@ import com.eatmybrain.smoketracker.util.Time
 @Composable
 fun BreakScreen(
     breakViewModel: BreakViewModel = hiltViewModel(),
-    premiumViewModel:PremiumViewModel = hiltViewModel(),
+    premiumViewModel: PremiumViewModel = hiltViewModel(),
     navigateToAchievements: () -> Unit,
-    navigateToAdvice:()->Unit
+    navigateToAdvice: () -> Unit
 ) {
     val breakActive = breakViewModel.isBreakActive.observeAsState()
     val totalTime by breakViewModel.totalTime.observeAsState()
@@ -41,13 +42,23 @@ fun BreakScreen(
     val moneySaved by breakViewModel.moneySaved.observeAsState()
     val weedFreeTime by breakViewModel.weedFreeTime.observeAsState()
 
-    LaunchedEffect(breakActive){
+    val price by premiumViewModel.price.observeAsState()
+    var showPremiumDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(breakActive) {
         breakViewModel.init()
     }
 
     if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
         Loading()
     } else {
+        if (showPremiumDialog) {
+            PremiumDialog(
+                onDismiss = { showPremiumDialog = false },
+                onBuyClicked = { premiumViewModel.purchase() },
+                price = price!!
+            )
+        }
         BreakScreenContent(
             stopBreak = {
                 breakViewModel.stopBreak()
@@ -59,11 +70,10 @@ fun BreakScreen(
             moneySaved = moneySaved!!,
             weedFreeTime = weedFreeTime!!,
             navigateToAchievements = {
-                if(hasPremium == true){
+                if (hasPremium == true) {
                     navigateToAchievements()
-                    navigateToAdvice()
-                } else{
-                    //TODO show dialog
+                } else {
+                    showPremiumDialog = true
                 }
             }
         )

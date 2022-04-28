@@ -1,14 +1,14 @@
 package com.eatmybrain.smoketracker.data
 
-import com.eatmybrain.smoketracker.util.Premium
+import com.eatmybrain.smoketracker.util.PremiumUtil
 
 
 //TODO
 class BillingRepository(
-    private val premium: Premium
+    private val premiumUtil: PremiumUtil
 )  {
 
-     fun hasPremium() = premium.available()
+     fun hasPremium() = premiumUtil.available()
 
     suspend fun price():Int{
         return 3
