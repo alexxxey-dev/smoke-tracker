@@ -5,6 +5,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -13,35 +16,57 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.eatmybrain.smoketracker.R
+import com.eatmybrain.smoketracker.ui.screens.premium.PremiumViewModel
 
 @Composable
 fun PremiumDialog(
     onDismiss: () -> Unit,
-    onBuyClicked: () -> Unit,
-    price: Int,
-    purchaseError: Boolean,
-    purchaseSuccess: Boolean
+    viewModel: PremiumViewModel
 ) {
-    if (purchaseSuccess) {
-        onDismiss()
-    } else {
-        Dialog(onDismissRequest = {
+    val price by viewModel.price.observeAsState()
+    val purchaseError by viewModel.purchaseError.observeAsState()
+    val purchaseSuccess by viewModel.purchaseSuccess.observeAsState()
+
+    if (purchaseSuccess == true) {
+        LaunchedEffect(purchaseSuccess) {
+            viewModel.purchaseResultHandled()
             onDismiss()
-        }) {
-            PremiumCard(
-                onBuyClicked = { onBuyClicked() },
-                price = price,
-                modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 10.dp),
-                showError = purchaseError
-            )
         }
     }
 
+    PremiumDialogUI(
+        onDismiss = {
+            viewModel.purchaseResultHandled()
+            onDismiss()
+        },
+        price = price,
+        onBuyClicked = {
+            viewModel.purchase()
+        },
+        purchaseError = purchaseError
+    )
+
 }
 
+@Composable
+private fun PremiumDialogUI(
+    onDismiss: () -> Unit,
+    price: Int?,
+    onBuyClicked: () -> Unit,
+    purchaseError: Boolean?
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        PremiumCard(
+            onBuyClicked = { onBuyClicked() },
+            price = price,
+            modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 10.dp),
+            showError = purchaseError!!
+        )
+    }
+}
 
 @Composable
-fun PremiumCard(onBuyClicked: () -> Unit, price: Int, modifier: Modifier, showError: Boolean) {
+fun PremiumCard(onBuyClicked: () -> Unit, price: Int?, modifier: Modifier, showError: Boolean) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = 2.dp,
@@ -78,14 +103,16 @@ fun PremiumCard(onBuyClicked: () -> Unit, price: Int, modifier: Modifier, showEr
                 onClick = onBuyClicked
             )
 
+            if (price != null) {
+                BottomText(
+                    price = price,
+                    showError = showError,
+                    modifier = Modifier
+                        .padding(top = 8.dp, bottom = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
 
-            BottomText(
-                price = price,
-                showError = showError,
-                modifier = Modifier
-                    .padding(top = 8.dp, bottom = 16.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
 
         }
     }

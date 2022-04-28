@@ -14,7 +14,12 @@ class BillingRepository(
         return 3
     }
 
-    suspend  fun purchase(sku:String):Boolean{
+    suspend  fun successPurchase(sku:String):Boolean{
+        premiumUtil.activate()
         return true
+    }
+
+    suspend  fun errorPurchase(sku:String):Boolean{
+        return false
     }
 }

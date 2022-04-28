@@ -72,7 +72,9 @@ private fun StopBreakUI(
     if (showStopBreakDialog.value) {
         StopBreakDialog(
             onDismiss = { showStopBreakDialog.value = false },
-            onYesClicked = { stopBreak() }
+            onYesClicked = {
+                stopBreak()
+            }
         )
     }
 }
@@ -122,17 +124,10 @@ private fun PremiumUI(
     showPremiumDialog: MutableState<Boolean>,
     premiumViewModel: PremiumViewModel
 ) {
-    val price by premiumViewModel.price.observeAsState()
-    val purchaseError by premiumViewModel.purchaseError.observeAsState()
-    val purchaseSuccess by premiumViewModel.purchaseSuccess.observeAsState()
-
     if (showPremiumDialog.value) {
         PremiumDialog(
             onDismiss = { showPremiumDialog.value = false },
-            onBuyClicked = { premiumViewModel.purchase() },
-            price = price!!,
-            purchaseError = purchaseError!!,
-            purchaseSuccess = purchaseSuccess!!
+            viewModel = premiumViewModel
         )
     }
 }

@@ -190,17 +190,10 @@ private fun PremiumUI(
     premiumViewModel: PremiumViewModel,
     showPremiumDialog: MutableState<Boolean>
 ) {
-    val premiumPrice by premiumViewModel.price.observeAsState()
-    val purchaseError by premiumViewModel.purchaseError.observeAsState()
-    val purchaseSuccess by premiumViewModel.purchaseError.observeAsState()
-
     if (showPremiumDialog.value) {
         PremiumDialog(
             onDismiss = { showPremiumDialog.value = false },
-            onBuyClicked = { premiumViewModel.purchase() },
-            price = premiumPrice!!,
-            purchaseError = purchaseError!!,
-            purchaseSuccess = purchaseSuccess!!
+            viewModel = premiumViewModel
         )
     }
 }

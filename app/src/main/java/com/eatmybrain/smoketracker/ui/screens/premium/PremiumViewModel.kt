@@ -37,12 +37,20 @@ class PremiumViewModel @Inject constructor(
 
 
     fun purchase() = viewModelScope.launch{
-        val successPurchase = withContext(Dispatchers.IO){billingRepository.purchase(Constants.PREMIUM_SKU)}
+        val successPurchase = withContext(Dispatchers.IO){billingRepository.errorPurchase(Constants.PREMIUM_SKU)}
         if(successPurchase){
             _purchaseSuccess.value = true
+            _purchaseError.value = false
         } else{
             _purchaseError.value = true
+            _purchaseSuccess.value = false
         }
+    }
+
+
+    fun purchaseResultHandled() {
+        _purchaseSuccess.value = false
+        _purchaseError.value =false
     }
 
 }

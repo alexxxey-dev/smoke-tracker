@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -25,7 +26,12 @@ fun PremiumScreen(viewModel: PremiumViewModel = hiltViewModel(), navigateToStati
     val purchaseSuccess by viewModel.purchaseSuccess.observeAsState()
 
     if (price == null) return
-    if(purchaseSuccess==true) navigateToStatistics()
+    if(purchaseSuccess==true) {
+        LaunchedEffect(purchaseSuccess){
+            navigateToStatistics()
+            viewModel.purchaseResultHandled()
+        }
+    }
 
     Premium(
         onBuyClicked = { viewModel.purchase()},
