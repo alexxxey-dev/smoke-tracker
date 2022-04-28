@@ -20,6 +20,11 @@ class PremiumViewModel @Inject constructor(
 
     val hasPremium = billingRepository.hasPremium().asLiveData()
 
+    private val _purchaseError = MutableLiveData(false)
+    val purchaseError :LiveData<Boolean> = _purchaseError
+
+    private val _purchaseSuccess = MutableLiveData(false)
+    val purchaseSuccess:LiveData<Boolean> = _purchaseSuccess
     init {
         loadPrice()
     }
@@ -32,7 +37,12 @@ class PremiumViewModel @Inject constructor(
 
 
     fun purchase() = viewModelScope.launch{
-        val successPurchase = billingRepository.purchase(Constants.PREMIUM_SKU)
+        val successPurchase = withContext(Dispatchers.IO){billingRepository.purchase(Constants.PREMIUM_SKU)}
+        if(successPurchase){
+            _purchaseSuccess.value = true
+        } else{
+            _purchaseError.value = true
+        }
     }
 
 }

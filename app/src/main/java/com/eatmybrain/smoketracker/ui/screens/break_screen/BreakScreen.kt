@@ -18,10 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.eatmybrain.smoketracker.R
-import com.eatmybrain.smoketracker.ui.components.CircleProgressBar
-import com.eatmybrain.smoketracker.ui.components.Loading
-import com.eatmybrain.smoketracker.ui.components.PremiumDialog
-import com.eatmybrain.smoketracker.ui.components.StyledButton
+import com.eatmybrain.smoketracker.ui.components.*
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumViewModel
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Time
@@ -35,34 +32,72 @@ fun BreakScreen(
     navigateToAdvice: () -> Unit
 ) {
     val breakActive = breakViewModel.isBreakActive.observeAsState()
-    val totalTime by breakViewModel.totalTime.observeAsState()
-    val leftTime by breakViewModel.leftTime.observeAsState()
+
+
     val hasPremium by premiumViewModel.hasPremium.observeAsState()
-    val gramsAvoided by breakViewModel.gramsAvoided.observeAsState()
-    val moneySaved by breakViewModel.moneySaved.observeAsState()
-    val weedFreeTime by breakViewModel.weedFreeTime.observeAsState()
-
-    val price by premiumViewModel.price.observeAsState()
-    var showPremiumDialog by remember { mutableStateOf(false) }
-
+    val showPremiumDialog = remember { mutableStateOf(false) }
+    val showStopBreakDialog = remember { mutableStateOf(false) }
     LaunchedEffect(breakActive) {
         breakViewModel.init()
     }
 
-    if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
-        Loading()
-    } else {
-        if (showPremiumDialog) {
-            PremiumDialog(
-                onDismiss = { showPremiumDialog = false },
-                onBuyClicked = { premiumViewModel.purchase() },
-                price = price!!
-            )
-        }
-        BreakScreenContent(
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        StopBreakUI(
+            showStopBreakDialog = showStopBreakDialog,
             stopBreak = {
                 breakViewModel.stopBreak()
                 navigateToAdvice()
+            }
+        )
+
+        BreakUI(
+            breakViewModel = breakViewModel,
+            navigateToAchievements = navigateToAchievements,
+            showPremiumDialog = showPremiumDialog,
+            hasPremium = hasPremium,
+            showStopBreakDialog = showStopBreakDialog
+        )
+
+        PremiumUI(showPremiumDialog = showPremiumDialog, premiumViewModel = premiumViewModel)
+    }
+
+
+}
+
+@Composable
+private fun StopBreakUI(
+    showStopBreakDialog: MutableState<Boolean>,
+    stopBreak: () -> Unit
+) {
+    if (showStopBreakDialog.value) {
+        StopBreakDialog(
+            onDismiss = { showStopBreakDialog.value = false },
+            onYesClicked = { stopBreak() }
+        )
+    }
+}
+
+@Composable
+private fun BreakUI(
+    breakViewModel: BreakViewModel,
+    showStopBreakDialog: MutableState<Boolean>,
+    navigateToAchievements: () -> Unit,
+    showPremiumDialog: MutableState<Boolean>,
+    hasPremium: Boolean?
+) {
+    val totalTime by breakViewModel.totalTime.observeAsState()
+    val leftTime by breakViewModel.leftTime.observeAsState()
+
+    val gramsAvoided by breakViewModel.gramsAvoided.observeAsState()
+    val moneySaved by breakViewModel.moneySaved.observeAsState()
+    val weedFreeTime by breakViewModel.weedFreeTime.observeAsState()
+
+    if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
+        Loading()
+    } else {
+        BreakScreenContent(
+            stopBreak = {
+                showStopBreakDialog.value = true
             },
             totalTime = totalTime!!,
             leftTime = leftTime!!,
@@ -73,15 +108,34 @@ fun BreakScreen(
                 if (hasPremium == true) {
                     navigateToAchievements()
                 } else {
-                    showPremiumDialog = true
+                    showPremiumDialog.value = true
                 }
             }
         )
-    }
 
+    }
 
 }
 
+@Composable
+private fun PremiumUI(
+    showPremiumDialog: MutableState<Boolean>,
+    premiumViewModel: PremiumViewModel
+) {
+    val price by premiumViewModel.price.observeAsState()
+    val purchaseError by premiumViewModel.purchaseError.observeAsState()
+    val purchaseSuccess by premiumViewModel.purchaseSuccess.observeAsState()
+
+    if (showPremiumDialog.value) {
+        PremiumDialog(
+            onDismiss = { showPremiumDialog.value = false },
+            onBuyClicked = { premiumViewModel.purchase() },
+            price = price!!,
+            purchaseError = purchaseError!!,
+            purchaseSuccess = purchaseSuccess!!
+        )
+    }
+}
 
 @Composable
 fun BreakScreenContent(

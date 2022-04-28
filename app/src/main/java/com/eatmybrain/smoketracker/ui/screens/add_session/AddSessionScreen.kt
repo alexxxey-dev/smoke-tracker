@@ -1,6 +1,7 @@
 package com.eatmybrain.smoketracker.ui.screens.add_session
 
 import android.app.Activity
+import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -47,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.eatmybrain.smoketracker.R
 import com.eatmybrain.smoketracker.ui.activity.MainActivity
 import com.eatmybrain.smoketracker.ui.components.PremiumDialog
+import com.eatmybrain.smoketracker.ui.components.StopBreakDialog
 import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
@@ -58,7 +60,43 @@ import com.eatmybrain.smoketracker.util.countCommas
 import com.eatmybrain.smoketracker.util.formatZero
 import com.eatmybrain.smoketracker.util.removeCommas
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+
+private fun onSaveClicked(
+    errorRes: Int?,
+    sessionId: Long,
+    breakActive: Boolean?,
+    showStopBreakDialog: MutableState<Boolean>,
+    navigateHome: () -> Unit,
+    context: Context,
+    scope: CoroutineScope,
+    snackbarHostState: SnackbarHostState
+) {
+    if (errorRes == null) {
+        if (sessionId == 0L && breakActive == true) {
+            showStopBreakDialog.value = true
+        } else {
+            navigateHome()
+        }
+    } else {
+        val text = context.getString(errorRes)
+        scope.launch { snackbarHostState.showSnackbar(text) }
+    }
+}
+
+private fun onHighTestClicked(
+    hasPremium: Boolean?,
+    navigateToHighTest: () -> Unit,
+    showPremiumDialog: MutableState<Boolean>
+) {
+    if (hasPremium == true) {
+        navigateToHighTest()
+    } else {
+        showPremiumDialog.value = true
+    }
+}
 
 
 @Composable
@@ -71,99 +109,56 @@ fun AddSessionScreen(
     navigateToHighTest: () -> Unit,
     navigateHome: () -> Unit
 ) {
-    val session by addViewModel.session.observeAsState()
-    if (session == null && sessionId != 0L) return
     val breakActive by breakViewModel.isBreakActive.observeAsState()
-    var showStopBreakDialog by remember { mutableStateOf(false) }
-    var showPremiumDialog by remember { mutableStateOf(false) }
-    val premiumPrice by premiumViewModel.price.observeAsState()
-    var strainName by remember { mutableStateOf(session?.strainInfo?.title ?: "") }
-    var price by remember { mutableStateOf(session?.pricePerGram?.formatZero() ?: "") }
-    var moodBefore by remember { mutableStateOf(session?.moodBefore ?: 0f) }
-    var moodAfter by remember { mutableStateOf(session?.moodAfter ?: 0f) }
-    var highStrength by remember { mutableStateOf(session?.highStrength ?: 0) }
-    var amount by remember { mutableStateOf(session?.amount?.formatZero() ?: "") }
+    val showStopBreakDialog = remember { mutableStateOf(false) }
+
+    val showPremiumDialog = remember { mutableStateOf(false) }
     val hasPremium by premiumViewModel.hasPremium.observeAsState()
-    var amountType by remember {
-        mutableStateOf(
-            session?.amountType?.string() ?: AmountType.Gram.string()
-        )
-    }
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    val onSaveClicked = {
-        val errorStringId = addViewModel.onSaveClicked(
-            strainName = strainName,
-            pricePerGram = price,
-            moodBefore = moodBefore,
-            moodAfter = moodAfter,
-            highStrength = highStrength,
-            amount = amount,
-            amountType = amountType
+
+    Box(contentAlignment = Center, modifier = Modifier.fillMaxSize()) {
+        StopBreakUI(
+            showStopBreakDialog = showStopBreakDialog,
+            addViewModel = addViewModel,
+            navigateHome = navigateHome
         )
 
-        if (errorStringId == null) {
-            if (sessionId == 0L && breakActive==true) {
-                showStopBreakDialog = true
-            } else {
-                navigateHome()
-            }
-        } else {
-            val text = context.getString(errorStringId)
-            scope.launch { snackbarHostState.showSnackbar(text) }
-        }
-    }
-
-    Box(contentAlignment = Center) {
-        if (showStopBreakDialog) {
-            StopBreakDialog(
-                onYesClicked = {
-                    addViewModel.stopBreak()
-                    navigateHome()
-                },
-                dismissDialog = {
-                    showStopBreakDialog = false
-                }
-            )
-        }
-
-        if(showPremiumDialog){
-            PremiumDialog(
-                onDismiss ={showPremiumDialog = false} ,
-                onBuyClicked = { premiumViewModel.purchase() },
-                price = premiumPrice!!
-            )
-        }
+        PremiumUI(
+            premiumViewModel = premiumViewModel,
+            showPremiumDialog = showPremiumDialog
+        )
 
 
-        AddSession(
-            strainName = strainName,
-            price = price,
-            moodAfter = moodAfter,
-            moodBefore = moodBefore,
-            highStrength = highStrength,
-            amount = amount,
-            amountType = amountType,
-            onAmountTypeChanged = { amountType = it },
-            onStrainNameChange = { strainName = it },
-            onPriceChange = { price = it },
-            onMoodBeforeChange = { moodBefore = it },
-            onMoodAfterChange = { moodAfter = it },
-            onHighStrengthChanged = { highStrength = it },
-            onAmountChanged = { amount = it },
-            onStrainInfoClicked = { navigateToStrainInfo(strainName) },
+        AddSessionUI(
+            addViewModel = addViewModel,
+            sessionId = sessionId,
+            onStrainInfoClicked = { navigateToStrainInfo(it) },
             onHighTestClicked = {
-                if (hasPremium == true) {
-                    navigateToHighTest()
-                } else {
-                    showPremiumDialog = true
-                }
+                onHighTestClicked(
+                    hasPremium = hasPremium,
+                    navigateToHighTest = navigateToHighTest,
+                    showPremiumDialog = showPremiumDialog
+                )
             },
-            onSaveClicked = { onSaveClicked() }
+            onSaveClicked = {
+                onSaveClicked(
+                    errorRes = it,
+                    sessionId = sessionId,
+                    breakActive = breakActive,
+                    showStopBreakDialog = showStopBreakDialog,
+                    navigateHome = navigateHome,
+                    context = context,
+                    scope = scope,
+                    snackbarHostState = snackbarHostState
+                )
+            }
         )
+
+
 
         SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(BottomCenter))
     }
@@ -172,14 +167,97 @@ fun AddSessionScreen(
 }
 
 @Composable
-private fun StopBreakDialog(
-    onYesClicked: () -> Unit,
-    dismissDialog: () -> Unit
+private fun StopBreakUI(
+    showStopBreakDialog: MutableState<Boolean>,
+    addViewModel: AddSessionViewModel,
+    navigateHome: () -> Unit
 ) {
-    //TODO show dialog
-    onYesClicked()
-    dismissDialog()
+    if (showStopBreakDialog.value) {
+        StopBreakDialog(
+            onYesClicked = {
+                addViewModel.stopBreak()
+                navigateHome()
+            },
+            onDismiss = {
+                showStopBreakDialog.value = false
+            }
+        )
+    }
 }
+
+@Composable
+private fun PremiumUI(
+    premiumViewModel: PremiumViewModel,
+    showPremiumDialog: MutableState<Boolean>
+) {
+    val premiumPrice by premiumViewModel.price.observeAsState()
+    val purchaseError by premiumViewModel.purchaseError.observeAsState()
+    val purchaseSuccess by premiumViewModel.purchaseError.observeAsState()
+
+    if (showPremiumDialog.value) {
+        PremiumDialog(
+            onDismiss = { showPremiumDialog.value = false },
+            onBuyClicked = { premiumViewModel.purchase() },
+            price = premiumPrice!!,
+            purchaseError = purchaseError!!,
+            purchaseSuccess = purchaseSuccess!!
+        )
+    }
+}
+
+@Composable
+private fun AddSessionUI(
+    addViewModel: AddSessionViewModel,
+    sessionId: Long,
+    onStrainInfoClicked: (String) -> Unit,
+    onHighTestClicked: () -> Unit,
+    onSaveClicked: (Int?) -> Unit
+) {
+    val session by addViewModel.session.observeAsState()
+    if (session == null && sessionId != 0L) return
+    var strainName by remember { mutableStateOf(session?.strainInfo?.title ?: "") }
+    var price by remember { mutableStateOf(session?.pricePerGram?.formatZero() ?: "") }
+    var moodBefore by remember { mutableStateOf(session?.moodBefore ?: 0f) }
+    var moodAfter by remember { mutableStateOf(session?.moodAfter ?: 0f) }
+    var highStrength by remember { mutableStateOf(session?.highStrength ?: 0) }
+    var amount by remember { mutableStateOf(session?.amount?.formatZero() ?: "") }
+    var amountType by remember {
+        mutableStateOf(session?.amountType?.string() ?: AmountType.Gram.string())
+    }
+    AddSession(
+        strainName = strainName,
+        price = price,
+        moodAfter = moodAfter,
+        moodBefore = moodBefore,
+        highStrength = highStrength,
+        amount = amount,
+        amountType = amountType,
+        onAmountTypeChanged = { amountType = it },
+        onStrainNameChange = { strainName = it },
+        onPriceChange = { price = it },
+        onMoodBeforeChange = { moodBefore = it },
+        onMoodAfterChange = { moodAfter = it },
+        onHighStrengthChanged = { highStrength = it },
+        onAmountChanged = { amount = it },
+        onStrainInfoClicked = { onStrainInfoClicked(strainName) },
+        onHighTestClicked = {
+            onHighTestClicked()
+        },
+        onSaveClicked = {
+            val errorRes = addViewModel.onSaveClicked(
+                strainName = strainName,
+                pricePerGram = price,
+                moodBefore = moodBefore,
+                moodAfter = moodAfter,
+                highStrength = highStrength,
+                amount = amount,
+                amountType = amountType
+            )
+            onSaveClicked(errorRes)
+        }
+    )
+}
+
 
 @Composable
 private fun AddSession(
@@ -669,6 +747,7 @@ private fun addSessionViewModel(timestamp: Long): AddSessionViewModel {
     ).addSessionViewModelFactory()
     return viewModel(factory = AddSessionViewModel.provideFactory(factory, timestamp))
 }
+
 
 @Preview
 @Composable

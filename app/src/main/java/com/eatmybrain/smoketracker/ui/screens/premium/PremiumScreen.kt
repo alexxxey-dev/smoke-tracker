@@ -19,26 +19,24 @@ import com.eatmybrain.smoketracker.util.Constants
 
 
 @Composable
-fun PremiumScreen(viewModel: PremiumViewModel = hiltViewModel()) {
+fun PremiumScreen(viewModel: PremiumViewModel = hiltViewModel(), navigateToStatistics:()->Unit) {
     val price by viewModel.price.observeAsState()
-
+    val purchaseError by viewModel.purchaseError.observeAsState()
+    val purchaseSuccess by viewModel.purchaseSuccess.observeAsState()
 
     if (price == null) return
-
+    if(purchaseSuccess==true) navigateToStatistics()
 
     Premium(
-        onBuyClicked = {
-            viewModel.purchase()
-        },
-        price = price!!
+        onBuyClicked = { viewModel.purchase()},
+        price = price!!,
+        purchaseError = purchaseError!!
     )
 }
 
 
 @Composable
-private fun Premium(onBuyClicked: () -> Unit, price: Int) {
-
-
+private fun Premium(onBuyClicked: () -> Unit, price: Int, purchaseError:Boolean) {
     Box(
         modifier = Modifier
             .padding(bottom = Constants.BOTTOM_NAV_HEIGHT)
@@ -55,7 +53,8 @@ private fun Premium(onBuyClicked: () -> Unit, price: Int) {
         PremiumCard(
             onBuyClicked = onBuyClicked, price = price, modifier = Modifier
                 .width(310.dp)
-                .height(300.dp)
+                .height(300.dp),
+            showError = purchaseError
         )
 
     }
@@ -70,7 +69,8 @@ private fun PremiumPreview() {
             it.calculateBottomPadding()
             Premium(
                 onBuyClicked = {},
-                price = 3
+                price = 3,
+                purchaseError = true
             )
         }
     }

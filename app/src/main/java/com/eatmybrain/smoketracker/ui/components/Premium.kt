@@ -5,7 +5,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -13,22 +12,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.MutableLiveData
 import com.eatmybrain.smoketracker.R
-import com.eatmybrain.smoketracker.ui.theme.BrightGreen
 
 @Composable
-fun PremiumDialog(onDismiss:()->Unit, onBuyClicked: () -> Unit, price: Int){
-    Dialog(onDismissRequest = {
+fun PremiumDialog(
+    onDismiss: () -> Unit,
+    onBuyClicked: () -> Unit,
+    price: Int,
+    purchaseError: Boolean,
+    purchaseSuccess: Boolean
+) {
+    if (purchaseSuccess) {
         onDismiss()
-    }){
-        PremiumCard(onBuyClicked = { onBuyClicked() }, price = price, modifier = Modifier.padding(10.dp,5.dp,10.dp,10.dp))
+    } else {
+        Dialog(onDismissRequest = {
+            onDismiss()
+        }) {
+            PremiumCard(
+                onBuyClicked = { onBuyClicked() },
+                price = price,
+                modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 10.dp),
+                showError = purchaseError
+            )
+        }
     }
+
 }
 
 
 @Composable
-fun PremiumCard(onBuyClicked: () -> Unit, price:Int, modifier: Modifier) {
+fun PremiumCard(onBuyClicked: () -> Unit, price: Int, modifier: Modifier, showError: Boolean) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = 2.dp,
@@ -66,18 +79,36 @@ fun PremiumCard(onBuyClicked: () -> Unit, price:Int, modifier: Modifier) {
             )
 
 
-            Text(
-                text = "$price${stringResource(R.string.price)}",
-                color = MaterialTheme.colors.secondary,
-                style = MaterialTheme.typography.body1,
+            BottomText(
+                price = price,
+                showError = showError,
                 modifier = Modifier
                     .padding(top = 8.dp, bottom = 16.dp)
                     .align(Alignment.CenterHorizontally)
             )
 
-
         }
     }
+}
+
+@Composable
+private fun BottomText(price: Int, showError: Boolean, modifier: Modifier) {
+    if (showError) {
+        Text(
+            modifier = modifier,
+            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.onError,
+            text = stringResource(R.string.error)
+        )
+    } else {
+        Text(
+            text = "$price${stringResource(R.string.price)}",
+            color = MaterialTheme.colors.secondary,
+            style = MaterialTheme.typography.body1,
+            modifier = modifier
+        )
+    }
+
 }
 
 @OptIn(ExperimentalMaterialApi::class)
