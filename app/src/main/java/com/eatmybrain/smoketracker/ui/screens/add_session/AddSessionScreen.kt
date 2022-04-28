@@ -49,6 +49,7 @@ import com.eatmybrain.smoketracker.ui.activity.MainActivity
 import com.eatmybrain.smoketracker.ui.components.StyledButton
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.AmountType
 import com.eatmybrain.smoketracker.ui.screens.add_session.enums.string
+import com.eatmybrain.smoketracker.ui.screens.break_screen.BreakViewModel
 import com.eatmybrain.smoketracker.ui.screens.premium.PremiumViewModel
 import com.eatmybrain.smoketracker.ui.theme.SmokeTrackerTheme
 import com.eatmybrain.smoketracker.util.Constants
@@ -64,12 +65,14 @@ fun AddSessionScreen(
     sessionId: Long,
     addViewModel: AddSessionViewModel = addSessionViewModel(sessionId),
     premiumViewModel: PremiumViewModel = hiltViewModel(),
+    breakViewModel: BreakViewModel = hiltViewModel(),
     navigateToStrainInfo: (String) -> Unit,
     navigateToHighTest: () -> Unit,
     navigateHome: () -> Unit
 ) {
     val session by addViewModel.session.observeAsState()
     if (session == null && sessionId != 0L) return
+    val breakActive by breakViewModel.isBreakActive.observeAsState()
     var showStopBreakDialog by remember { mutableStateOf(false) }
     var strainName by remember { mutableStateOf(session?.strainInfo?.title ?: "") }
     var price by remember { mutableStateOf(session?.pricePerGram?.formatZero() ?: "") }
@@ -100,7 +103,7 @@ fun AddSessionScreen(
         )
 
         if (errorStringId == null) {
-            if (sessionId == 0L) {
+            if (sessionId == 0L && breakActive==true) {
                 showStopBreakDialog = true
             } else {
                 navigateHome()
@@ -114,13 +117,14 @@ fun AddSessionScreen(
     Box(contentAlignment = Center) {
         if (showStopBreakDialog) {
             StopBreakDialog(
-                stopBreak = { addViewModel.stopBreak() },
-                navigateHome = {
+                onYesClicked = {
+                    addViewModel.stopBreak()
                     navigateHome()
                 },
                 dismissDialog = {
                     showStopBreakDialog = false
-                })
+                }
+            )
         }
 
 
@@ -158,13 +162,11 @@ fun AddSessionScreen(
 
 @Composable
 private fun StopBreakDialog(
-    stopBreak: () -> Unit,
-    navigateHome: () -> Unit,
+    onYesClicked: () -> Unit,
     dismissDialog: () -> Unit
 ) {
     //TODO show dialog
-    stopBreak()
-    navigateHome()
+    onYesClicked()
     dismissDialog()
 }
 

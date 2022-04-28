@@ -33,7 +33,7 @@ fun BreakScreen(
     navigateToAchievements: () -> Unit,
     navigateToAdvice:()->Unit
 ) {
-    val breakActive = breakViewModel.isBreakActive.collectAsState(initial = false)
+    val breakActive = breakViewModel.isBreakActive.observeAsState()
     val totalTime by breakViewModel.totalTime.observeAsState()
     val leftTime by breakViewModel.leftTime.observeAsState()
     val hasPremium by premiumViewModel.hasPremium.observeAsState()
@@ -44,6 +44,7 @@ fun BreakScreen(
     LaunchedEffect(breakActive){
         breakViewModel.init()
     }
+
     if (totalTime == null || leftTime == null || gramsAvoided == null || moneySaved == null || weedFreeTime == null) {
         Loading()
     } else {

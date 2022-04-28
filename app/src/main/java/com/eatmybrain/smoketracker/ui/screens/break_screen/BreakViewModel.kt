@@ -31,7 +31,7 @@ class BreakViewModel @Inject constructor(
     private val _gramsAvoided = MutableLiveData<String>()
     val gramsAvoided: LiveData<String> = _gramsAvoided
 
-    val isBreakActive = breakRepository.isBreakActive()
+    val isBreakActive = breakRepository.isBreakActive().asLiveData()
 
     private var timer: Timer? = null
     private val ONE_SECOND = 1000L

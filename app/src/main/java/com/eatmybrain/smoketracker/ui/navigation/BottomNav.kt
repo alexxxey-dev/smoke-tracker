@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -28,43 +29,47 @@ fun BottomNav(
     breakViewModel: BreakViewModel = hiltViewModel()
 ) {
     val hasPremium by premiumViewModel.hasPremium.observeAsState()
-    val breakActive by breakViewModel.isBreakActive.collectAsState(initial = false)
+    val breakActive by breakViewModel.isBreakActive.observeAsState()
+    val items =  BottomNavItem.values().filter { it.isVisible(hasPremium, breakActive) }
     if(hasPremium==null) return
 
-
-
     BottomNavigation(
-        items = BottomNavItem.values(),
-        navController = navController,
-        hasPremium = hasPremium,
-        breakActive = breakActive
+        items = items,
+        navController = navController
     )
 }
 
 @Composable
 private fun BottomNavigation(
     items: List<BottomNavItem>,
-    navController: NavController,
-    hasPremium: Boolean?,
-    breakActive: Boolean?
+    navController: NavController
 ) {
+    fun onItemClick(item:BottomNavItem){
+        navController.navigate(item.screenRoute) {
+            popUpTo(navController.graph.findStartDestination().id)
+            launchSingleTop = true
+        }
+    }
+
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.background,
         modifier = Modifier.height(Constants.BOTTOM_NAV_HEIGHT)
     ) {
         val currentRoute = currentRoute(navController)
-
-
         items.forEach { item ->
-            if(item.isVisible(hasPremium, breakActive)){
-                BottomNavItem(item,navController,currentRoute)
-            }
+            BottomNavItem(
+                item = item,
+                onItemClick = {
+                    onItemClick(item)
+                },
+                currentRoute = currentRoute
+            )
         }
     }
 }
 
 @Composable
-private fun RowScope.BottomNavItem(item: BottomNavItem, navController: NavController, currentRoute:String?){
+private fun RowScope.BottomNavItem(item: BottomNavItem, onItemClick:() ->Unit, currentRoute:String?){
     BottomNavigationItem(
         icon = {
             Icon(
@@ -83,15 +88,7 @@ private fun RowScope.BottomNavItem(item: BottomNavItem, navController: NavContro
         unselectedContentColor = MaterialTheme.colors.secondary,
         alwaysShowLabel = true,
         selected = currentRoute == item.screenRoute,
-        onClick = {
-            navController.navigate(item.screenRoute) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
+        onClick =onItemClick
     )
 }
 
