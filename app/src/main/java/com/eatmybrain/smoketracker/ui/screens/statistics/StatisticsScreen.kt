@@ -113,7 +113,8 @@ private fun Statistics(
                 modifier = Modifier.padding(
                     start = 12.dp,
                     end = 12.dp,
-                    bottom = Constants.BOTTOM_NAV_HEIGHT + 8.dp
+                    bottom = Constants.BOTTOM_NAV_HEIGHT,
+                    top = 4.dp
                 ),
                 onSessionClicked = onSessionClicked
             )
@@ -245,7 +246,7 @@ private fun SessionList(
         items(sessionList) { session ->
             SessionItem(
                 modifier = Modifier
-                    .padding(vertical = 4.dp)
+                    .padding(bottom = 8.dp)
                     .fillMaxWidth(),
                 session = session,
                 onClick = onSessionClicked
